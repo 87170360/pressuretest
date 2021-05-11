@@ -1,0 +1,48 @@
+syntax = "proto3";//指定版本信息
+package protobuf;//包名
+option go_package = ".;protobuf";
+
+message Item {
+	uint32 	id 			=	1;			//服务器唯一id
+	uint32 	confId 		=	2;			//配置表id
+	uint32 	count 		=	3;			//数量
+	bool 	using 		=	4;			//是否正在使用
+	string 	expiredTime =	5;			//过期时间
+}
+//SC_ALL_ITEM_DATA 所有物品数据
+message AllItemData
+{
+	repeated Item items = 1;	//物品列表
+}
+//SC_UPDATE_ITEM_DATA 更新物品
+//包括添加/更改/删除，数量为0表示删除
+message UpdateItem {
+	repeated Item items = 1;	//物品数据
+}
+//CS_SELL_ITEM
+//返回协议为 Common.Result协议
+message RequestSellItem{
+	uint32 itemId = 1;			//物品id 注意：itemId and itemConfId不能共存，如果两个都有会优先使用itemId
+	uint32 itemConfId = 2;		//物品配置表id
+	int32 count = 3;			//数量
+}
+
+//CS_USE_ITEM
+//返回协议为 Common.Result协议
+message RequestUseItem{
+	uint32 itemId = 1;			//物品id 注意：itemId and itemConfId不能共存，如果两个都有会优先使用itemId
+	uint32 itemConfId = 2;	//物品配置表id
+	int32 count = 3;				//数量
+}
+
+
+message OpenItemData{
+	uint32 itemConfId = 1;	//物品配置表id
+	int32 count = 3;				//数量
+}
+//SC_AUTO_GIFT
+message OpenAutoGift {
+	uint32 giftId = 1;	//礼包id
+	uint32 giftCount= 2;	//礼包数量
+	repeated OpenItemData items = 3;
+}

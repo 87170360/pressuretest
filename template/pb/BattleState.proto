@@ -1,0 +1,72 @@
+syntax = "proto3"; //指定版本信息
+package protobuf; //包名
+option go_package = ".;protobuf";
+import "BattleRound.proto";
+
+enum BattleState
+{
+	STATE_START = 0;								// 状态机的开始状态, 为了统一处理goto
+	STATE_INIT = 1;									// 初始化状态
+	STATE_LOADING = 2;								// loading状态
+	STATE_STATE_PLAYING = 3;						// 战斗状态
+    STATE_END = 4;									// 战斗结束状态
+}
+
+enum RoundType 
+{
+	ROUND_TYPE_UNKNOW = 0; 		//未知回合状态
+	ROUND_TYPE_INITIAL = 1; 	//初始回合
+	ROUND_TYPE_BATTLE = 2; 		//战斗回合
+	ROUND_TYPE_MONSTER = 3; 	//野怪回合
+	ROUND_TYPE_RUSH_BUY = 4;	//抢购回合
+}
+
+enum RoundStateType 
+{
+	ROUND_STATE_UNKNOW = 0;		     //未知状态
+	
+	/*----------初始回合开始---------*/
+	ROUND_STATE_INITIAL_READY = 1;   //初始回合准备状态
+	
+	/*----------战斗回合,野怪回合开始---------*/
+	ROUND_STATE_BATTLE_READY = 2;    //战斗准备状态
+	ROUND_STATE_BATTLE_PREPLAY = 3;  //战斗缓冲状态
+	ROUND_STATE_BATTLE_PLAYING = 4;  //战斗状态
+	ROUND_STATE_BATTLE_END = 5;      //战斗结束状态
+	
+	/*-----------------抢购回合----------------*/
+	ROUND_STATE_RUSH_BUY_READY	= 6; //抢购准备状态
+	ROUND_STATE_RUSH_BUY = 7;		 //抢购状态
+}
+
+// 战场回合状态变化通知
+// SC_BATTLE_ROUND_STATE_CHANGE
+message BattleRoundStateChangeNotify
+{
+	uint32 roundType = 1;							// 回合类型 对应RoundType
+	uint32 roundState = 2;				            // 回合状态, 对应类型RoundStateType
+	uint32 continueSec = 3;		                	// 持续时间
+	uint32 roundNum = 4;			                // 当前回合
+    uint32 battleElapseSec = 5;	                	// 战斗经历的时长
+    bool   needStateTick = 6;                       // 是否需要状态tick
+	bool   bFirstState = 7;							// 是否为第一个状态
+	RoundExpandData expandData = 8;					// 拓展数据
+	string  stayTime = 9;							// 在这个状态停留的时间
+}
+
+// 战场回合状态计时tick
+// SC_BATTLE_ROUND_STATE_TICK
+message BattleRoundStateTickNotify
+{
+	uint32 roundType = 1;							// 回合类型 对应RoundType
+	uint32 roundState = 2;				            // 回合状态, 对应类型RoundStateType
+	uint32 countdown = 3;					        // 倒计时剩余秒数
+}
+
+// 最终回合
+// SC_BATTLE_FINAL_ROUND
+message BattleFinalRound
+{
+	string	mainUserID  = 1;	//主场玩家ID
+	string 	customerUserID = 2; //客场玩家ID
+}

@@ -1,0 +1,96 @@
+syntax = "proto3";//指定版本信息
+package protobuf;//包名
+option go_package = ".;protobuf";
+//用户信息
+message UserInfo
+{ 
+	string uid = 1;			 //玩家id
+	string userName = 2;	 //用户名
+	string headIcon = 3;	 //头像id或地址
+  	int32 coupon = 6;        //点券
+	int32 gold = 5;		     //金豆
+	int32 silver = 4;		 //银豆
+  	int32 love = 7;          //爱心
+	int32 level = 8;		 //等级
+	string modelResId = 9;   //模型资源id
+	string mapResId = 10;	 //地图资源id
+	string minMapResId = 11; //地图缩略图id
+	string now = 12; 		 //当前时间
+	int32  exp = 13;         //等级经验
+	int32  duanExp = 14;	//段位经验
+	int32  sex = 15; 		 //性别
+	int32  headFrame = 16; 		 //头像框
+	int32  countryId = 17; 		 //国籍
+	int32  honour = 18; 		 //称号
+	bool	 isQiSheng = 19;	 //是否是棋圣
+	repeated int32 headList = 20;		//拥有头像列表
+	repeated int32 headFrameList = 21;  //拥有头像框列表
+	repeated int32 honourList = 22;		//拥有称号列表
+	int32  heroExp = 23;	//勇者积分
+	int32  playerModelId = 24;// 棋手id
+	int32  boardModelId = 25; // 棋盘id
+}
+//SC_USER_DATA_CHANGE //更新用户信息
+message UpdateUserInfo
+{
+	int32 typeId = 1;//属性枚举类型
+	string value = 2;//属性值
+}
+
+//获取其他玩家信息
+//CS_GET_OTHER_USER_INFO
+message ReqGetOtherUserInfo
+{
+	int64 uid = 1;	//获取玩家的id
+}
+
+//CS_GET_OTHER_USER_INFO回调
+message ResGetOtherUserInfo
+{
+	int32 errorCode = 1; 	//错误码
+	string uid = 2;			//玩家id
+	string userName = 3; 	//用户名
+	string headIcon = 4; 	//头像id或地址
+	int32  level = 5;		//等级
+	int32  gold = 6;		//金豆
+	int32  sex  = 7; 	 	//性别
+	int32  headFrame = 8;	//头像框
+	int32  countryId = 9;	//国籍	
+	int32  honour = 10;  	//称号
+	int32  exp = 11;        //玩家经验
+	int32  duanExp = 12;    //段位经验
+	int32  heroExp=13;  	//勇者积分
+	int32  playerModelId = 14;// 棋手id
+	int32  boardModelId = 15; // 棋盘id
+}
+
+
+	
+//CS_USER_INFO_CHANGE
+message ChangeUserInfo {
+	int32 typeId = 1;//属性枚举类型 1name 2headIcon 3headframe 4sex 5country 6honour
+	string value = 2;//属性值
+	
+}
+
+//CS_STORAGE_SET_MESSAGE
+message SaveCustomInfoReq {
+	string key = 1;
+	string value = 2;
+}
+
+
+//CS_STORAGE_GET_MESSAGE
+message GetCustomInfoReq {
+	string key = 1;
+}
+message GetCustomInfoRes {
+	int32 errorCode = 1;
+	string key = 2;
+	string value = 3;
+}
+
+// 分享游戏
+// CS_SHARE_GAME
+message ShareGame {}
+

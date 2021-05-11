@@ -1,0 +1,27 @@
+syntax = "proto3"; //指定版本信息
+package protobuf; //包名
+option go_package = ".;protobuf";
+enum TickoutType {
+    TICK_OUT_TYPE_NONE = 0;
+    ACCOUNT = 1;//账号顶替
+    SERVER_SHUTDOWN = 2;//服务器关闭
+}
+//登录请求
+//CS_USER_LOGIN
+message LoginRequest
+{
+    string account = 1; //账号
+    string passWord = 2; //密码
+}
+//登录回调
+//CS_USER_LOGIN
+message LoginResponse 
+{
+    int32 errorCode = 1;//错误码 0表示没有错误
+}
+/**
+* 踢用户下线
+*/
+message UserTickout{
+    TickoutType type = 1;
+}

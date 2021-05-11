@@ -1,0 +1,50 @@
+syntax = "proto3"; //指定版本信息
+package protobuf; //包名
+option go_package = ".;protobuf";
+
+import "Team.proto";
+
+//  RPC_CHAT_JOINLEAVE response is Result
+message ChatUserJoinLeave {
+    string meetId = 1;
+    uint32 optionType = 2;      //0离开 1加入
+}
+
+//  CS_CHAT_SAY     request 
+//  SC_CHAT_INFO    response
+message ChatUserMsg {
+    uint32 meetType = 1;        // 频道类型 1世界 2好友 3队伍 4战场 5喇叭
+    string meetId = 2;          // 会议ID
+    string uidForm = 3;         // 发送者id
+    string uidTo = 4;           // 接受者id
+    uint32 itemId = 5;          // 道具类型
+    string content = 6;         // 聊天内容
+    RecruitMsg linkContent = 7;     // 链接内容 自定义格式
+    ChatUserInfo uidFormInfo = 8;   // 发送者信息
+    int64  createTime = 9;          // 消息时间
+}
+
+message ChatUserInfo {
+    string userName = 1;	 //用户名
+    string headIcon = 2;	 //头像id或地址
+    int32  headFrame = 3; 	 //头像框
+	int32  sex = 4; 		 //性别
+	int32  duanExp = 5;	     //段位经验
+	int32  countryId = 6; 	 //国籍
+}
+
+
+//  CS_CHAT_SAY response
+message ChatUserMsgResult {
+    int32 errorCode = 1;        //状态
+    int64 activeTime = 2;       //活跃时间戳
+}
+
+//  SC_CHAT_NOTICE
+message ChatNotice {
+    uint32 deliveredId = 1;        //公告ID
+    uint32 deliveredOften = 2;     //公告存在次数
+    uint32 deliveredSpeed = 3;     //公告滚屏速度
+    string deliveredDes = 4;       //公告描述
+}
+

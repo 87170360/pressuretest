@@ -1,0 +1,311 @@
+syntax = "proto3"; //指定版本信息
+package protobuf; //包名
+option go_package = ".;protobuf";
+
+import "BattleCommon.proto";
+
+// 玩家属性变化原因
+enum RoundPlayerPropChangeReason
+{
+	REASON_DEFAULT = 0;										// 默认值
+	REASON_SELL_HERO = 1;									// 出售英雄
+	REASON_BUY_HERO = 2;									// 购买英雄
+	REASON_BUY_POPULATION_EXP = 3;							// 购买人口经验
+	REASON_REFRESH_STORE = 4;								// 刷新商店
+	REASON_ROUND_BALANCE = 5;								// 结算
+	REASON_ROUND_INIT	 = 6;								// 初始回合
+	REASON_ACTION = 7;						 				// 触发器
+}
+
+// SC_ROUND_PLAYER_PROP_UPDATE
+message RoundPlayerPropUpdateNotify
+{
+	enum eRoundPlayerPropType
+	{
+		PropType_unknow = 0;					// 未知
+		PropType_HP = 1;						// HP
+		PropType_Level = 2;						// 等级
+		PropType_Population = 3;				// 人口
+		PropType_PolulationExp = 4;				// 经验(指人口经验)
+		PropType_Crystal = 5;					// 金币(战斗内的用的, 后改名为水晶)
+	}
+
+	message RoundPlayerPropUnit
+	{
+		string uid = 1;							            // 玩家的ID
+		uint32 propType = 2;						        // 属性类型
+		uint32 value = 3;							        // 属性的值
+		int32 change = 4;							        // 之前的值(看情况)
+		uint32 reason = 6;					                // 变换的原因, 类型RoundPlayerPropChangeReason的值
+	}
+
+	uint32 fightID = 1;
+	repeated RoundPlayerPropUnit propList = 2;			    // 属性列表
+}
+
+// 获取玩家回合属性数据
+// CS_GET_ROUND_PLAYER_PROP
+message RoundPlayerPropInfoRequest { }
+
+// 连胜或者连败
+message ContinueResult
+{
+	bool isWin = 1;							                // true为连胜, false 为连败
+	uint32 num = 2;							                // 连胜/败的次数
+}
+
+// SC_GET_ROUND_PLAYER_PROP
+message RoundPlayerPropInfoResponse
+{
+	message RoundPlayerProp
+	{
+		string uid = 1;							            // 玩家的ID
+		uint32 hp = 2;							            // HP
+		uint32 level = 3;							        // 等级
+		uint32 population = 4;					            // 人口
+		uint32 populationExp = 5;							// 人口经验
+		uint32 crystal = 6;							        // 水晶
+        ContinueResult continueResult = 7;		            // 连胜/败
+        uint32 rank = 8;                                    // 排名(0表示没有淘汰)
+	}
+	repeated RoundPlayerProp playerPropList= 1;			    // 属性列表
+}
+
+
+// 清理通知(Ready 阶段)的通知
+// SC_ROUND_CLEAR_NOTIFY
+message RoundClearNotify { }
+
+//////////////////////////////////////////////////////////////////////////
+message RoundExpandData 
+{
+	RoundReadyInfoNotify	readyInfo	= 1;
+}
+
+//战斗准备状态附加信息
+message RoundReadyInfoNotify
+{
+	repeated RoundReadyInfoUnit listUserReadyInfo = 1;
+}
+
+// 回合一开始(Ready 阶段)的信息通知
+message RoundReadyInfoUnit
+{
+	string uid = 1;	
+	uint32 monsterID = 2;						            // 添加野怪ID
+	RoundReadyEconomicPreviewInfo economicPreview = 3;	    // 经济预览信息
+}
+
+message RoundReadyEconomicPreviewInfo
+{
+	uint32 totalCrystal = 1;						        // 总共金币(战斗内的用的, 后改名为水晶)
+	uint32 totalPopulationExp = 2;						    // 总共经验
+	uint32 baseCrystal = 3;						            // 基础金币(战斗内的用的, 后改名为水晶)
+	uint32 interestCrystal = 4;					            // 金币利息
+	uint32 winCrystal = 5;						            // 胜利时金币
+	uint32 continueCrystal = 6;					            // 连胜/败利息
+	bool isContinueWin = 7;					                // 是否连胜
+	uint32 basePopulationExp = 8;						    // 基础经验
+	uint32 extraPopulationExp = 9;						    // 额外经验
+}
+
+//////////////////////////////////////////////////////////////////////////
+// 回合匹配信息通知
+enum RoundModeType
+{
+	ROUND_MODE_TYPE_UNKNOW = 0;				                // 未知匹配
+	ROUND_MODE_TYPE_MIRROR = 1;				                // 镜像匹配
+	ROUND_MODE_TYPE_1V1 = 2;					            // 1V1匹配
+};
+
+// SC_ROUND_MATCH_INFO
+message RoundMatchInfoNotify
+{
+    message RoundMatchePlayer
+    {
+        string uid = 1;                                      // 玩家自己
+        bool isRealPlayer = 2;                              // 是否是真实玩家，true为是, 野怪或者镜像为false,
+    }
+
+    message RoundMatchCombat
+	{
+        uint32 modeType = 1;						        // 匹配类型 RoundModeType
+        string hostUid = 2;						            // 主场的玩家
+        repeated RoundMatchePlayer player_list = 3;         // 玩家列表信息
+    }
+	repeated RoundMatchCombat roundCombatList = 1;			// 回合匹配战斗信息
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+// 回合结束通知
+
+message RoundContinueBreak
+{
+    string brokerUid = 1;								    // 终结者的玩家, 0(野怪回合的野怪方)
+    uint32 oldContinueNum = 2;							    // 老的连续数值
+    bool isWinBreak = 3;                                    // 连胜(true)/连败(false)被终结
+}
+
+// SC_ROUND_END
+message RoundEndNotify
+{
+	message RoundResultUnit
+	{
+		string uid = 1;								        // 玩家的ID, 如果pdbid = 0为野怪方
+		int32 result = 2;								    // 回合的结果, 负数为失败, 0(平)，正数(胜利)，目前除了失败就是胜利
+		uint32 hurtHP = 3;							        // 减少的血量（对方棋手攻击的伤害+对方棋子攻击的伤害）
+		uint32 winCount = 4;							    // 胜利回合数
+		uint32 lostCount = 5;							    // 失败回合数
+		ContinueResult continueResult = 6;				    // 连胜/败
+		bool realPlayer = 7;							    // 是否是真是玩家, false 可能是镜像, 野怪等
+        uint32 remainHeroNum = 8;						    // 剩余英雄个数
+		RoundContinueBreak continueBreak = 9;               // 连续中断中断
+		uint32 chessHurtHP = 10;							// 对方棋手攻击的伤害
+	}
+	//string boardID = 1;								        // 棋盘ID
+	repeated RoundResultUnit roundResultList = 2;		    // 结果列表
+    uint32 roundModeType = 3;						        // 匹配类型[RoundModeType]
+    string hostUid = 4;						                // 主场的玩家
+}
+
+// //////////////////////////////////////////////////////////////////////////
+// // 连续被打断通知
+// // SC_ROUND_CONTINUE_BREAK
+// message RoundContinueBreakNotify
+// {
+// 	string uid = 1;									        // 玩家ID
+// 	string brokerUid = 2;								    // 被终结的玩家
+//     uint32 oldContineNum = 3;							    // 老的连续数值
+//     string hostUid = 4;                                      // hostUid
+// }
+
+//////////////////////////////////////////////////////////////////////////
+// 出局通知
+// SC_ROUND_KNOCKOUT
+message RoundKnockoutNotify
+{
+	string uid = 1;									        // 出局的玩家ID
+	string oppUid = 2;								        // 出局时对手的ID
+}
+
+//////////////////////////////////////////////////////////////////////////
+// 获取战斗详情
+// CS_GET_ROUND_DETAIL
+message BattleRoundGetDetailRequest
+{
+
+}
+
+// SC_GET_ROUND_DETAIL
+message BattleRoundGetDetailResponse
+{
+	message BattleRoundDetailUnit
+	{
+		string uid = 1;								    // 玩家ID
+		uint32 maxHp = 2;								// 玩家最大血量
+		uint32 curHp = 3;								// 当前血量
+		uint32 hpOrder = 4;							    // 扣血的顺序
+		uint32 curCrystal = 5;							// 当前金币(商店购买用的，或者是叫水晶)
+		uint32 population = 6;						    // 当前人口
+        LineupUnit lineup = 7;							// 阵容信息
+        repeated BattleGroupInfo fetter = 8;			// 羁绊信息
+		uint32 winCount = 9;							// 胜利回合数
+		uint32 loseCount = 10;						    // 失败回合数
+		ContinueResult continueResult = 11;			    // 连胜/败
+		uint32 knockOutRoundNum = 12;					// 出局的回合
+		uint32 killUserTotalHp = 13;					// 杀死棋手总血量
+		string knockOutUid = 14;						    // 踢出局的人(nKnockOutRoundNum不为0, 该字段为0则为野怪在野怪回合被打败的)
+	}
+	repeated BattleRoundDetailUnit detailList = 1;				// 详情信息
+}
+
+/*--------------------------------------抢购回合开始-------------------------------------*/
+// 跳转到抢购场景，客户端执行 传送->抢购场景表现
+// SC_RUSH_BUY_GOTO_SCENES 
+message BattleRushBuy_GotoScenes
+{
+	message RushUserInfo 
+	{
+		string	userID = 1;
+	}
+	
+	message RushRoleInfo
+	{
+		uint32 	svrID	 = 1;
+		uint32 	confID   = 2;
+		uint32 	star     = 3;
+		uint32 	pos      = 4;
+		uint32 	minPrice = 5;	//最低出价
+	}
+	
+	uint32 scenesID	= 1;		//场景的ID,唯一ID
+	string scenesResID = 2;		//场景资源ID
+	uint32	maxBidNum = 3;		//最大出价次数
+	
+	repeated RushUserInfo 	userList = 4;	//玩家信息，有序
+	repeated RushRoleInfo 	roleList = 5;	//棋子信息，以及出现的顺序
+
+}
+
+// 请求出价
+// CS_RUSH_BUY_BID callBack return BattleRushBuy_BidCallBack
+message BattleRushBuy_BidReq
+{
+	uint32 roleSvrID = 1;	//抢购角色服务器ID
+	uint32 price = 2;		//出价
+}
+
+message BattleRushBuy_BidCallBack 
+{
+	int32  nCode = 1;
+	uint32 roleSvrID = 2;	//抢购角色服务器ID 与请求保持一致
+	uint32 price = 3;		//最终出价值（可能与请求不一致，服务器自动修正）
+	uint32 curBidNum = 4;	//已出价次数
+}
+
+//请求取消出价
+// CS_RUSH_BUY_CANCEL_BID callBack return 
+message BattleRushBuy_CancelBid
+{
+	uint32 roleSvrID = 1;	//抢购角色服务器ID
+}
+
+message BattleRushBuy_CancelBidCallBack
+{
+	int32  nCode = 1;
+	uint32 roleSvrID = 2;	//抢购角色服务器ID
+	uint32 curBidNum = 3;	//已出价次数
+}
+
+//出价信息变化 广播消息
+// SC_RUSH_BUY_SYNC_INFO
+message BattleRushBuy_SyncInfo
+{
+	uint32 totalBidUser = 1; //完成出价的总人数
+}
+
+// 抢购结果，客户端执行：棋子动画->棋子离开动画->切回自我场景->棋子飞自我场景动画
+// SC_RUSH_BUY_BID_RESULT 
+message BattleRushBuy_BidResult 
+{		
+	//棋子结果数据
+	message ResultRoleInfo
+	{
+		uint32			rushBuyRoleSvrID  = 1;	//抢购棋子的角色ID
+		bool			isPassBuy		  = 2;	//是否流拍 :如果流拍，下面的数据将无效
+		uint32			roleSvrID		  = 3;	//创建的真正的棋子ID
+		string 			masterUserID	  = 4;	//主人ID
+		uint32			posArea			  = 5;	//被放置的区域 0被售出 1等待区 2棋盘
+		int32 			posGridIndex	  = 6;	//被放置的位置 
+	}
+	
+	//出价结果
+	message ResultBidInfo
+	{
+		uint32 			rushBuyRoleSvrID  = 1;	//抢购棋子的角色ID
+		bool			isBuy		  	  = 2;	//是否买到
+	}
+	repeated ResultRoleInfo listResultRole = 1;	//棋子结果数据
+	repeated ResultBidInfo	listBidInfo = 2;	//出价结果
+}

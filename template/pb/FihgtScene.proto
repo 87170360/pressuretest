@@ -1,0 +1,26 @@
+syntax = "proto3";//指定版本信息
+package protobuf;//包名
+option go_package = ".;protobuf";
+
+//SC_INIT_FIGHT_SCENE
+message FightSceneInfoInit {
+	repeated FightSceneInfo sceneInfos = 1;//战斗场景数据列表
+}
+
+message FightSceneInfo//战斗场景数据
+{
+	uint32 sceneId = 1;	//场景ID
+	string uIdUp = 2;	//上方玩家id
+	string uIdDown = 3;	//下方玩家id
+	repeated SceneRoleData roleDataList = 4;//场景玩家数据
+}
+
+//场景角色数据
+message SceneRoleData {
+	uint32 roleId = 1;//角色id
+	int32 gridIndex = 3;//格子索引
+	int32 maxHp = 7;
+	int32 hp = 8;
+	int32 maxMp = 9;
+	int32 mp = 10;
+}

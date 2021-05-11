@@ -1,0 +1,569 @@
+syntax = "proto3"; //指定版本信息
+package protobuf; //包名
+option go_package = ".;protobuf";
+
+import "BattleCommon.proto";
+
+///////////////////////////////////战斗商店行为//////////////////////////////////////////
+//请求战场商店客户端数据现场
+//CS_BATTLE_STORE_GETINFO
+message BattleStore_SyncContext_Req
+{
+	string userID 	= 1;		//用户id
+}
+
+//同步战场商店客户端数据现场
+//SC_BATTLE_STORE_SYNCINFO
+message BattleStore_SyncContext_Res
+{
+	uint32			nUpdateType = 1;		//0创建现场 1系统刷新 2主动刷新 3购买后同步
+	repeated uint32 listCardID  = 2;		//你的商店可购买卡牌ID列表
+	bool			bLock       = 3;		//锁定的状态
+	repeated uint32	listTeamID  = 4;		//首次推荐的TeamID集
+	string userID 	= 5;		//用户id
+}
+
+//战斗商店，请求刷新战斗商店
+//CS_BATTLE_STORE_REFRESH
+message BattleStore_Refresh_Req
+{
+
+}
+
+//战场商店，请求购买
+//CS_BATTLE_STORE_BUY
+message BattleStore_Buy_Req
+{
+	uint32 nBuyIndex = 1;	//购买的卡牌位置index(从0开始)
+}
+
+//战场商店，请求购买后返回
+//购买的卡牌创建到等待区，等待区增加棋子的功能见:等待区实体创建消息
+//SC_BATTLE_STORE_BUY
+message BattleStore_Buy_Res
+{
+	uint32 	nBuyIndex = 1;	//你购买的位置,与请求一致
+	string userID 	= 2;	//用户id
+	uint32 roleId = 3;		//棋子id
+}
+
+//战斗商店 请求锁定
+//CS_BATTLE_STORE_LOCK
+message BattleStore_Lock_Req
+{
+	bool	bLock = 1;		//需要设定到的状态
+}
+
+//战斗商店 请求锁定返回
+//SC_BATTLE_STORE_LOCK
+message BattleStore_Lock_Res
+{
+	bool	bLock = 1;		//锁定的状态
+	string userID 	= 2;	//用户id
+}
+
+///////////////////////////////////等待区,棋盘/////////////////////////////////////////////
+//等待区变化
+//SC_BATTLE_WAIT_CHANGE
+message BattleWait_Change_Res
+{
+	uint32 nType 	  = 1;		//0增加 1减少
+	uint32 nServerID  = 2;		//角色ID
+	string nUserID	  = 3;
+	repeated uint32 roleList = 4;	//角色列表
+}
+
+//请求上阵角色到棋盘
+//CS_BATTLE_ACTION_UP_ROLE
+message BattleAction_UpRole_Req
+{
+	uint32 nServerID     = 1;		//角色服务器ID
+	uint32 nPos			 = 2;		//位置ID
+}
+
+//实体上阵通知
+message BattleAction_UpRole_Notify
+{
+	uint32  nServerID     	 = 1;		//角色服务器ID
+	uint32 	nPos 			 = 2;		//上阵的位置
+	uint32  nCurNum 		 = 3;		//操作之后的棋盘上阵数量
+	string	nUserID			 = 4;
+}
+
+//SC_BATTLE_ACTION_UP_ROLES
+message BattleAction_UpRoles_Res
+{
+	bool system = 1;//是否系统调用
+	repeated BattleAction_UpRole_Notify listRoles = 2;
+}
+
+//请求下阵棋盘角色
+//CS_BATTLE_ACTION_DOWN_ROLE
+message BattleAction_DownRole_Req
+{
+	uint32  nServerID     	= 1;			//角色服务器ID（在棋盘上的）
+	uint32  nWaitServerID	= 2;			//等待区的角色服务器ID（如果放在空位，则为0）
+}
+
+//棋盘角色下阵通知
+//SC_BATTLE_ACTION_DOWN_ROLE
+message BattleAction_DownRole_Res
+{
+	uint32 nServerID     = 1;			//角色服务器ID
+	string nUserID	  	 = 2;			//棋盘ID
+	uint32 nCurNum		 = 3;			//操作之后的棋盘上阵数量
+}
+
+//棋盘角色位置交换
+//SC_BATTLE_ACTION_SWAP_PLACE
+message BattleAction_SwapPlace_Res
+{
+	string	nUserID	  		= 1;	//
+	uint32  nServerID_1     = 2;	//角色ID1
+	uint32	nPos_1			= 3;	//角色1当前位置
+	uint32  nServerID_2     = 4;	//实体ID2
+	uint32	nPos_2			= 5;	//角色2当前位置
+}
+
+//请求英雄升级
+//CS_BATTLE_ACTION_LEVELUP_ROLE
+message BattleAction_LevelUp_Role_Req
+{
+	uint32  srcSvrID  	  = 1;		//主体角色SvrID
+	uint32  copySvrID 	  = 2;		//需要消耗的人参娃娃ID
+}
+
+//请求Hero升级返回
+//SC_BATTLE_ACTION_LEVELUP_ROLE
+message BattleAction_LevelUp_Role_Res
+{
+	uint32  srcSvrID   = 1;				//升级后的角色
+	uint32  nStar	   = 2;				//升级后的星级
+	repeated uint32  	listUseSvrID = 3;	//被销毁的角色SvrID
+	string	userID	   = 4;				//升星玩家ID
+}
+
+//出售Hero
+//CS_BATTLE_ACTION_SELL_ROLE
+message BattleAction_SellRole_Req
+{
+	uint32  serverID  = 1;				//角色
+}
+
+//出售Hero返回
+//SC_BATTLE_ACTION_SELL_ROLE
+message BattleAction_SellRole_Res
+{
+	uint32 serverID  = 1;				//角色
+	bool system = 2;					//是否系统出售
+}
+
+//买经验
+//CS_BATTLE_ACTION_BUY_EXP
+message BattleAction_BuyExp_Req
+{
+
+}
+
+/*-----------------------------装备相关开始----------------------------*/
+message BattleCondInfo
+{
+	int32 nProgress = 1; //进度
+}
+
+message BattleEquipInfo
+{
+	uint32 nConfID = 1; 					  //装备配置ID
+	uint32 nSvrID = 2;  					  //装备服务器唯一ID
+	repeated BattleCondInfo listCondInfo = 3; //条件列表
+	uint32 masterSvrID = 4;					  //主人的服务器ID
+}
+
+//请求装备仓库信息
+//CS_BATTLE_EQUIPWAREHOUSE_GETINFO
+message BattleEquipWareHouse_GetInfo_Req
+{
+	string userID 					   = 1;		//用户id 
+}
+
+//返回装备仓库信息
+//CS_BATTLE_EQUIPWAREHOUSE_GETINFO
+message BattleEquipWareHouse_GetInfo_Res
+{
+	repeated BattleEquipInfo equipList = 1;		//装备列表 ID，Num
+	string userID 					   = 2;		//用户id 
+}
+
+enum BattleEquipReason
+{
+	BattleEquipReason_Unknow = 0;
+	BattleEquipReason_PickUp = 1;	//捡起装备
+	BattleEquipReason_TakeOff = 2;	//脱下装备
+	BattleEquipReason_PutOn = 3;	//穿上装备
+}
+
+//装备仓库增加装备
+//SC_BATTLE_EQUIPWAREHOUSE_ADD_EQUIP
+message BattleEquipWareHouse_AddEquip_Res
+{
+	repeated BattleEquipInfo listEquipInfo  = 1;	//增加的装备信息
+	BattleEquipReason nReason	  = 2;	//变化的原因 参见枚举 BattleEquipReason
+	string userID 				  = 3;		//用户id 
+}
+
+//装备仓库移除装备
+//SC_BATTLE_EQUIPWAREHOUSE_REMOVE_EQUIP
+message BattleEquipWareHouse_RemoveEquip_Res
+{
+	uint32 nSvrID = 1;   //装备的SvrID
+	BattleEquipReason nReason = 2;	//变化的原因 参见枚举 BattleEquipReason
+	string userID 			  = 3;		//用户id 
+}
+
+//穿上一件装备
+//CS_BATTLE_EQUIP_PUTON 成功会触发: SC_BATTLE_EQUIPWAREHOUSE_REMOVE_EQUIP
+message BattleEquip_PutOn_Req
+{
+	uint32  nRoleSvrID  = 1;	//
+	uint32  nEquipSvrID = 2;	//装备ID
+	uint32  nFromRoleSvrID = 3;	//装备原来的角色ID 无则填0
+}
+
+//SC_BATTLE_EQUIP_PUTON
+message BattleEquip_PutOn_Res
+{
+	uint32 nRoleSvrID  = 1;				//
+	BattleEquipInfo equipInfo = 2;		//装备信息发生变化
+	string userID 			  = 3;		//用户id 
+}
+
+//卸下一个角色的装备
+//CS_BATTLE_EQUIP_TAKEOFF 成功会触发:SC_BATTLE_EQUIPWAREHOUSE_ADD_EQUIP
+message BattleEquip_TakeOff_Req
+{
+	uint32 nRoleSvrID  = 1;			//
+	uint32 nEquipSvrID = 2;			//传递0代表脱下全部
+}
+
+//SC_BATTLE_EQUIP_TAKEOFF
+message BattleEquip_TakeOff_Res
+{
+	uint32 nRoleSvrID  = 1;			//		
+	uint32 nEquipSvrID = 2;			//0代表脱下全部
+	string userID 	   = 3;			//用户id 
+}
+
+//装备信息发生变化
+//SC_BATTLE_EQUIP_NOTIFY
+message BattleEquip_Notify_Res
+{	
+	message NotifyInfo
+	{
+		uint32 nSvrID = 1;  	//装备服务器唯一ID
+		repeated int32 listProgress = 2;//所有的进度值
+		string userID 	   = 3;			//用户id 
+	}
+	repeated NotifyInfo listInfo = 1;
+}
+
+//装备升级
+//SC_BATTLE_EQUIP_LVUP
+message BattleEquip_LevelUp_Res
+{
+	uint32 nSvrID = 1;  	//装备服务器唯一ID
+	BattleEquipInfo newInfo = 2; //升级后的信息
+	string userID 	   = 3;			//用户id 
+}
+
+//掉落宝箱
+//SC_BATTLE_TREASURE_BOX_DROP
+message BattleTreasureBox_DropRes
+{
+	message dropInfo 
+	{
+		uint32 mapID = 1;	//掉落的地图ID
+		uint32 pos = 2;		//掉落的位置（0开始）
+		uint32 goodsType = 3;	//BattleGoodsType
+		uint32 goodsConfID = 4;
+		uint32 goodsNum = 5;
+		string  ownerUserID = 6;	//谁的
+		uint32 svrID = 7;
+	}
+	repeated dropInfo listDropInfo = 1;
+}
+
+//捡起宝箱
+//CS_BATTLE_TREASURE_BOX_PICKUP
+message BattleTreasureBox_PickUp_Req
+{
+	uint32 mapID = 1;	//哪个地图
+	uint32 pos = 2;		//位置（0开始）
+}
+
+//宝箱被捡起，广播
+//SC_BATTLE_TREASURE_BOX_PICKUP
+message BattleTreasureBox_PickUp_Res
+{
+	message pickInfo 
+	{
+		uint32 mapID = 1;	//哪个地图
+		uint32 pos = 2;		//位置（0开始）
+		string  userID = 3;	//谁捡的
+		uint32 svrID = 4; 
+	}
+	repeated pickInfo listPickInfo = 1;
+}
+
+/*-----------------------------物品球开始----------------------------*/
+enum BattleGoodsType
+{
+	DROP_GOODS_TYPE_EQUIP = 0;		//装备
+	DROP_GOODS_TYPE_CRYSTAL = 1;	//水晶
+}
+
+message BattleBoxGridInfo 
+{
+	uint32 index = 1;
+	bool   isBuy = 2;
+	uint32 goodsType = 3;	//BattleGoodsType
+	uint32 goodsConfID = 4;
+	uint32 goodsNum = 5;
+}
+
+//物品球创建 广播
+//SC_BATTLE_CREATE_GOODS_BOX 
+message BattleCreateGoodsBox_Res
+{
+	message boxInfo 
+	{
+		uint32 	 dropID = 1;		//对应的掉落表中的掉落ID
+		uint32   boxSvrID = 2;		//该球的唯一ID
+		string	 userID = 3;		//谁的
+		repeated BattleBoxGridInfo listGrid = 4; //格子
+		uint32 	 selectNum = 5;
+	}
+	repeated boxInfo listBox = 1;
+}
+
+//刷新物品球 callback
+//CS_BATTLE_REFRESH_GOODS_BOX
+message BattleRefreshBox_Req
+{
+	uint32  boxSvrID = 1;	
+}
+
+//callback 返回 
+message BattleRefreshBox_Res
+{
+	int32 	 code = 1;
+	uint32   boxSvrID = 2;
+	repeated BattleBoxGridInfo listGrid = 3;
+}
+
+//选择物品球 callback return BattleChoiceBox_Res
+//CS_BATTLE_CHOICE_GOODS_BOX
+message BattleChoiceBox_Req
+{
+	uint32   boxSvrID = 1;
+	uint32   gridIndex = 2;
+}
+
+message BattleChoiceBox_Res
+{
+	int32 	 nCode = 1; 
+	uint32   boxSvrID = 2;
+	uint32   gridIndex = 3;
+	uint32 	 selectNum = 4;
+}
+//删除物品球 广播
+//SC_BATTLE_DELETE_GOODS_BOX 
+message BattleDeleteGoodsBox
+{
+	string    userID = 1;
+	uint32	 boxSvrID = 2;
+}
+
+/*-----------------------------羁绊系统开始----------------------------*/
+
+//羁绊系统变化通知 SC_BATTLE_GROUP_CHANGED
+message BattleGroupChanged_Notify
+{
+	string	userID = 1;				//羁绊拥有者
+    repeated BattleGroupInfo listGroup = 2;	//羁绊信息列表
+}
+
+message MsgBattleHurtInfo
+{
+	uint32 hurtType = 1; //参见枚举 HURT_TYPE
+	uint32 hurtValue = 2;	//伤害值
+}
+
+message MsgBattleHurtRoleInfo
+{
+	uint32 	 nConfigID   = 1;	//角色ID
+	uint32 	 nStar = 2;			//角色星级
+	repeated MsgBattleHurtInfo hurtList = 3;	//伤害列表
+}
+
+message MsgBattleHurtPlayerInfo
+{
+	string 	 userID	  = 1;			//玩家ID
+	repeated MsgBattleHurtRoleInfo roleList = 2;	//英雄列表
+}
+
+//伤害统计变化通知
+//SC_BATTLE_HURT_STATISTICS
+message BattleHurtStatistics_Res
+{
+	int32	nType = 1;	//0全量更新（覆盖） 1变化更新（增量,部分玩家数据）
+	repeated MsgBattleHurtPlayerInfo listPlayerInfo = 2;
+}
+
+
+//请求设置阵型
+//CS_BATTLE_SET_FORMATION
+message BattleSettFormationReq
+{
+	message rolePos 
+	{
+		uint32 serverID  = 1;
+		uint32 pos		 = 2;
+	}
+	uint32 	formationID = 1;
+	repeated rolePos listPos = 2;
+}
+
+//请求设置信息 返回SC_BATTLE_SYNC_SETTING 无CallBack返回
+//CS_BATTLE_GET_SETTING
+message BattleSettingGetReq
+{
+}
+////////////////////////////////////////////////////////////////////////////////
+enum SettingType
+{
+    SETTING_UNKONW = 0;
+    SETTING_AUTO_LEVEL_UP = 1;              // bool
+    SETTING_REC_LINEUP_ID = 2;              // 推荐阵容ID, uint32
+    SETTING_REC_FORMATION_ID = 3;           // 推荐阵型ID, uint32
+}
+
+//同步配置信息
+//SC_BATTLE_SYNC_SETTING
+message BattleSettingSyncRes
+{
+    //bool	bAutoLevelUp = 1;	//自动升级
+    map<uint32, string> setings = 2;
+}
+
+//请求设置
+//CS_BATTLE_CHANGE_SETTING
+message BattleSettingChangeReq
+{
+    //bool	bAutoLevelUp = 1;	//自动升级
+    map<uint32, string> setings = 2;
+}
+
+//Buff变更
+//SC_BATTLE_SYNC_BUFF_CHANGE
+message BattleBuff_ChangeRes
+{
+	message UserBuffInfo
+	{
+		uint32 	 roleID	  = 1;			//棋子ID
+		repeated int32 listBuffID = 2;	//改变的BUFFID	正加负减
+	}
+	repeated UserBuffInfo listUserBuff = 1;
+}
+
+//请求用户设置准备状态
+//CS_BATTLE_SET_BATTLE_READY_STATE
+message BattleSetReadyStateReq
+{
+	uint32 setState = 1;  // 1 设置准备状态, 2 取消准备状态
+}
+
+//同步客户端当前准备状态
+//SC_BATTLE_SYNC_READY_STATE
+message BattleSyncReadyState
+{
+	uint32 allReadyUserCount = 1;  //  所有已准备的玩家数量
+	uint32 allFightUserCount = 2;  // 所有参与战斗的用户数量
+	string uid = 3; 								 // 用户ID
+}
+
+/*-----------------------------棋手系统开始----------------------------*/
+// 请求棋手移动
+// CS_CHESS_PLAYER_MOVE callback return result
+message BattleChessPlayer_MoveReq
+{
+	int32  nX = 1;
+	int32  nY = 2;
+	int32  nZ = 3;
+}
+
+// 棋手移动通知 
+// SC_CHESS_PLAYER_MOVE 
+message BattleChessPlayer_MoveRes
+{
+	string  id = 1;
+	int32  nX = 2;
+	int32  nY = 3;
+	int32  nZ = 4;
+}
+
+// 请求观战
+// CS_BATTLE_WATCH_REQ callback return result
+message BattleWatch_Req
+{
+	string  targetID = 1;	//查看的ID
+}
+
+// SC_BATTLE_WATCH_RES
+message BattleWatch_Res
+{
+	string  srcUserID = 1;	//谁的操作
+	string  targetID = 2;	//查看的ID
+}
+
+// 同步命令
+// CS_BATTLE_ASYNC_COMMAND 
+message BattleAsyncCommandReq
+{                              
+    string data = 1;
+}
+
+// SC_BATTLE_ASYNC_COMMAND 
+message BattleAsyncCommandRes
+{                            
+	string  id   = 1;
+    string data = 2;
+}
+
+//增加特效
+//SC_BATTLE_SYNC_ROLE_EFFECTS_CHANGE
+message BattleRole_ChangeEffectsRes
+{
+	message EffectData
+	{
+		int32 effectID  = 1;
+		int32 playNum  = 2;
+	}
+	
+	message RoleEffectsInfo
+	{
+		uint32 	 roleID	  = 1;				//棋子ID
+		repeated EffectData listEffectInfo = 2;	//改变的特效正加负减
+	}
+	repeated RoleEffectsInfo listRole = 1;
+}
+
+//触发器执行
+//SC_BATTLE_TRIGGER_EXECUTE
+message BattleTriggerExecute_Res
+{	
+	uint32 roleID = 1;
+	repeated uint32 targetRoleList = 2;
+	uint32 triggerID = 3;
+	int32 col = 4;
+	int32 row = 5;
+}

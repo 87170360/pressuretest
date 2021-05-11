@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="UTF-8">
+    <title>服务器压测工具</title>
+    <script src="http://libs.baidu.com/jquery/2.1.1/jquery.min.js"></script>
+    <script src="http://cdn.bootcss.com/bootstrap/3.3.0/js/bootstrap.min.js"></script>
+    <script src="/template/static/js/pageFun.js"></script>
+    <link rel="stylesheet" href="http://cdn.bootcss.com/bootstrap/3.3.0/css/bootstrap.min.css">
+    <style>
+        *{
+            margin: 0;
+            padding: 0;
+        }
+        .table>tbody>tr>td:first-child{
+            width: 350px;
+        }
+        .table>tbody>tr>td {
+            line-height:2.5
+        }
+        .header{
+            width: auto;
+            height: 80px;
+            background: #428bca;
+            border-bottom: 2px solid #BBB;
+        }
+        .header h1{
+            margin: 0;
+            padding: 0;
+            width: auto;
+            text-align: center;
+            line-height: 80px;
+            color: white;
+        }
+    </style>
+</head>
+<body>
+<div class="header">
+    <h1>服务器压测工具</h1>
+</div>
+    <div class="body">
+    <div class="row" style="margin-top: 20px;margin-left:-8px">
+        <div class="col-md-0"></div>
+        <div class="col-md-12">
+        <div class="row">
+            <div class="col-md-2">
+                <a class="btn btn-primary btn-sm " href="#" onclick="playAll(this)" id="buttonPlayAll" style="width:82px">PLAY ALL</a>
+                <input type="text" class="form-control input-count-allCount" placeholder="人数" style="width:120px;display:unset;" aria-describedby="basic-addon1" value="1">
+            </div>
+            <div class="col-md-4">
+                <div class="input-group">
+                    <span class="input-group-addon" id="basic-addon3">服务器地址</span>
+                    <input type="text" class="form-control input-serverHost" style="width:150px;display:unset;" onBlur="save('serHost')">
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="input-group">
+                    <span class="input-group-addon" id="basic-addon3">播放倍速</span>
+                    <input type="number" class="form-control input-playSpeed" min="1"  style="width:100px;display:unset;" onBlur="save('playSpeed')">
+                </div>
+            </div>
+        </div>
+        </div>
+        <div class="col-md-0"></div>
+        <table class="theadTemp" style="display: none">
+            <thead><tr>
+                <th></th>
+                <th>用户名称</th>
+                <th>消息数量</th>
+                <th></th>
+            </tr></thead>
+        </table>
+    </div>
+    <div class="row" style="margin-top: 20px">
+        <div class="col-md-0"></div>
+        <div class="col-md-12">
+            <!-- Table -->
+            <table class="table">
+                <thead><tr>
+                    <th></th>
+                    <th>用户名词</th>
+                    <th>消息数量</th>
+                    <th></th>
+                </tr></thead>
+            </table>
+        </div>
+        <div class="col-md-0"></div>
+    </div>
+    </div>
+</body>
+<script>
+    loadCookies();
+    loadUserList();
+    window.setInterval(loadUserList,1000*1);
+</script>
+</html>

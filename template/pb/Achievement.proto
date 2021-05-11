@@ -1,0 +1,42 @@
+syntax = "proto3"; //指定版本信息
+package protobuf; //包名
+option go_package = ".;protobuf";
+
+
+// 成就的更新类型
+enum SyncAchievementType
+{
+    UNKNOWN_ACHIEVEMENT_TYPE = 0;
+    SYNC_ACHIEVEMENT_ALL = 1;
+    SYNC_ACHIEVEMENT_PART = 2;
+}
+
+
+enum AchievementIsGetReward
+{
+    ACHIEVEMENT_CAN_NOT_GET_REWAROD = 0;            // 不能领取奖励
+    ACHIEVEMENT_HAVE_GET_REWARD = 1;                // 已经领取奖励
+    ACHIEVEMENT_NOT_GET_REWARD = 2;                 // 未领取奖励
+}
+
+
+
+// 成就类型数据
+message AchievementMsg
+{
+    uint32 AchID  = 1;                   // 成就ID
+    repeated int32 arguments = 2;       // 参数
+    int32 isGetReward = 3;              // 是否领取奖励  同AchievementIsGetReward
+}
+
+
+// 成就数据初始化
+// SC_ACHIEVEMENT_SYNC_ACHIEVEMTN_MSG
+message SyncAchievement
+{
+    int32 syncType = 1;                                 // 更新类型 同SyncAchievementType
+    repeated AchievementMsg AchMsgList = 2;
+}
+
+
+

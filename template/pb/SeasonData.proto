@@ -1,0 +1,103 @@
+syntax = "proto3";//指定版本信息
+package protobuf;//包名
+option go_package = ".;protobuf";
+
+          
+enum SeasonState {							// 赛季状态
+	SEASON_STATE_IDLE    	   = 0;   
+	SEASON_STATE_OPEN      	   = 1;         //开启阶段
+	SEASON_STATE_SETTLEMENT    = 2;        	//结算状态
+	SEASON_STATE_CLOSE         = 3;       	//关闭状态
+}
+
+//CS_UPDATE_SEASON_DATA //全部赛季信息
+message SeasonData {
+	bool 	participation 	= 1;				//是否参与赛季
+	uint32	seasonId  		= 2;				//赛季ID	
+	float	exp 			= 3;	           	//段位经验
+	uint32	sumSession   	= 4;				//总场次
+	float	championRate  	= 5;				//夺冠率
+	float	topFourRate		= 6;				//前4率
+	float	averageRanking  = 7;      			//平均排名
+	bool  	seasonReward 	= 8;				//赛季奖励是否领取
+	bool 	duanWeiReward 	= 9;				//段位奖励是否领取
+}
+//全部赛季信息
+message UpdateSeasonData
+{
+	repeated SeasonData seasonList = 1;			//赛季信息
+}
+
+//CS_CURRENT_SEASON_DATA //获取当前赛季信息
+message CurrentSeasonData
+{	
+	uint32 	seasonId  	 		= 1;		 	//赛季ID
+	int64	state      			= 2;			//当前的状态SeasonState
+	int64	startTime          	= 3;			//开启时间
+	int64	endTime            	= 4;			//结束时间
+	int64	settlementEndTime  	= 5;			//结算结束时间
+}
+
+//CS_RECEIVE_SEASON_REWARD		//领取赛季奖励
+message Receive_SeasonReward_Req
+{
+	uint32 	seasonId		 	=	1;			//赛季id
+}
+
+//CS_SEASON_DUANWEI_REWARD		//领取赛季所有段位奖励
+message Season_DuanWeiReward_Req
+{
+	uint32 	seasonId		 	=	1;			//赛季id
+}
+
+//羁绊数据
+message FettersData
+{
+	uint32 	id		 			=	1;				//羁绊id
+	uint32 	number		 		=	2;				//羁绊数量
+}
+//排名数据
+message RankingInfo {
+	uint32	sumSession   		= 2;				//总场次
+	float	championRate  		= 3;				//夺冠率
+	float	topFourRate			= 4;				//前4率
+	float	averageRanking  	= 5;      			//平均排名	
+	float	tenAverageRanking  	= 6;      			//10场平均排名
+	repeated FettersData eachFettersList= 7;		//羁绊数据
+}
+//当前赛季各个模式信息
+message PatternData {
+	uint32	gameModelId  				= 1;		//模式ID
+	RankingInfo seasonRanking  			= 2;		//赛季排名数据	
+}
+//CS_SEASON_PATTERN_INFO //当前赛季所有模式信息
+message UpdateSeasonData_Res
+{	
+	RankingInfo seasonRanking  			= 1;		//赛季排名数据
+	repeated PatternData patternList 	= 2;		//模式信息
+}
+//CS_SEASON_PATTERN_INFO //当前赛季所有模式信息
+message UpdateSeasonData_Req
+{
+    int64	userId				= 1;				//UserId
+}
+
+//SC_PUSH_SEASON_STATE //推送赛季状态
+message PushSeasonState
+{
+    uint32 	seasonId		 	=	1;			//赛季id
+	int64	state      			= 	2;			//当前的状态SeasonState
+	int64	startTime          	= 	3;			//开启时间
+	int64	endTime            	= 	4;			//结束时间
+	int64	settlementEndTime  	= 	5;			//结算结束时间
+}
+
+//CS_QUERY_SEASON_REWARD		//查询赛季奖励
+message QuerySeasonReward
+{
+	uint32 	seasonId		 	= 1;			//赛季id
+	float	exp 				= 2;	        //段位经验
+	uint32  seasonReward 		= 3;			//赛季奖励是否领取0不可领取1可领取2已领取
+}
+
+

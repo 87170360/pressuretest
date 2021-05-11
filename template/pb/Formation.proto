@@ -1,0 +1,51 @@
+syntax = "proto3";//指定版本信息
+package protobuf;//包名
+option go_package = ".;protobuf";
+
+message Formation 
+{
+	uint32 formationId = 1;          //阵容id
+    string formationName = 2;        //阵容名称
+    repeated uint32 listRoleID = 3;      //角色列表
+}
+
+//CS_FORMATION_GET
+//callback return Formation_GetRes
+message Formation_GetReq
+{
+
+}
+
+message Formation_GetRes
+{
+	uint32 	 selectformationID = 1;
+    repeated Formation myformation = 2;
+}
+
+//CS_FORMATION_SELECT
+//callback return result 
+message Formation_Select_Req
+{
+	uint32 	 selectFormationID = 1;
+}
+
+//CS_FORMATION_SET
+//callback return Formation_SetFormation_Res 
+message Formation_SetFormation_Req
+{
+	Formation formaiton = 1;	//如果是新增，ID=0
+}
+
+message Formation_SetFormation_Res
+{
+	int32 	errorCode = 1;
+	uint32	formaitonID = 2;
+}
+
+//CS_FORMATION_DEL
+//callback return result 
+message Formation_DelFormation_Req
+{
+	uint32 formaitonId = 1;          //阵容id
+}
+

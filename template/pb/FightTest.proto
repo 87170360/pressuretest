@@ -1,0 +1,56 @@
+syntax = "proto3";//指定版本信息
+package protobuf;//包名
+option go_package = ".;protobuf";
+//CS_FIGHT_TEST_ADD_CARD 购买棋子
+message FightTestAddCard
+{ 
+	int32 cardId = 1;		 //棋子id
+	int32 start = 2;	 	 //棋子星级
+}
+//CS_FIGHT_TEST_START_FIGHT 开始战斗
+message FightTestStartFight
+{
+}
+//CS_FIGHT_TEST_ADD_EQUIP 添加装备
+message FightTestAddEquip
+{
+	uint32 equipId = 1;//装备id
+}
+//CS_FIGHT_TEST_CHANGE_EQUIP 穿装备
+message FightTestUpDownEquip
+{
+	string uid = 1; //玩家id
+	uint32 roleId = 2;//棋子id
+	uint32 equipId = 3;//装备id
+	bool puton = 4;//是否穿戴，否则脱下
+}
+
+//CS_FIGHT_TEST_UP_ROLE 上阵
+message FightTestUpRole 
+{
+	string ownerUid = 1;//棋子拥有者玩家id
+	string targetUid = 2;//目标玩家id
+	uint32 roleId = 3;//需要上阵的棋子id
+	uint32 tagPos = 4;//目标位置
+}
+
+//CS_FIGHT_TEST_SELL_ROLE 出售棋子
+message FightTestSellRole
+{
+	string uid = 1;//玩家id
+	uint32 roleId = 2;//棋子id
+}
+
+//CS_FIGHT_TEST_USE_SKILL 使用技能
+message FightTestUseSkill
+{
+	uint32 sceneId = 1;//场景id
+	uint32 roleId = 2;//棋子id
+	uint32 skillId = 3;//技能id
+}
+
+//CS_FIGHT_TEST_CHANGE_AUTO_SKILL 更换是否自动使用技能
+message FightTestChangeAutoSkill
+{
+	bool autoSkill = 1;
+}

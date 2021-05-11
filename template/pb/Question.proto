@@ -1,0 +1,22 @@
+syntax = "proto3"; //指定版本信息
+package protobuf; //包名
+option go_package = ".;protobuf";
+
+//CS_QUESTION_DATA
+message QuestionStatus {
+    uint32 status = 1;          // 状态  0次数不足.1直接补豆.2需要作题
+    uint32 questionType = 2;    // 答题模式ID
+    uint32 answerCount = 3;     // 答题次数
+    repeated QuestionList question = 4;
+}
+
+message QuestionList {
+    uint32 id = 1;
+    repeated uint32 answes = 2; // 已选题目 [1,0,0,0]
+}
+
+//CS_QUESTION_ANSWER
+message QuestionAnswer {
+    uint32 qid = 1;
+    uint32 opt = 2;  // 选项下标
+}

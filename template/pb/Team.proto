@@ -1,0 +1,189 @@
+syntax = "proto3";//指定版本信息
+package protobuf;//包名
+option go_package = ".;protobuf";
+
+enum InviteReplyType          // 同意类型
+{
+    INVITE_REPLY_TYPE_UNKNOWN = 0;         // 未知的类型
+    INVITE_REPLY_TYPE_AGREE   = 1;         // 同意邀请
+    INVITE_REPLY_TYPE_REFUSE  = 2;         // 拒绝邀请
+}
+
+enum ReadyStatusType             // 设置准备状态类型
+{
+    READY_STATUS_TYPE_UNKNOWN  = 0;        // 未知的类型
+    READY_STATUS_TYPE_READY    = 1;        // 设置准备
+    READY_STATUS_TYPE_UNREADY  = 2;        // 取消准备
+}
+
+// 邀请好友组队 todo 程序中需要有错误码返回, 返回自己是否可以邀请和目标是否可以被邀请
+// CS_TEAM_INVITE_FRIENDS_TO_TEAM
+message InviteFriendsToTeam
+{
+    int64  friendID = 1;      // 好友ID
+    int32  modeID= 2;         // 场次ID
+}
+
+
+// 向用户发送被邀请信息
+// SC_TEAM_SEND_INVITE_MSG_TO_USER
+message SendInviteMsgToUser
+{
+    int64   inviterID = 1;      // 邀请者ID
+    string  name = 2;           // 邀请者名字
+    int32   sex = 3;            // 邀请者性别
+    uint32  duanweiExp = 4;     // 邀请者段位经验
+    int32   mode = 5;           // 游戏模式
+    string  teamID = 6;         // 队伍ID
+}
+
+// 用户回复用户的邀请
+// CS_TEAM_REPLY_USER_INVITE todo 通过错误码来返回用户当前是否可以加入组队和组队是否可以加入的信息
+message ReplyUserInvite
+{
+    int32 replyType = 1;        // 同意还是拒绝  对应InviteReplyType
+    int64 inviterID = 2;        // 邀请者ID
+    string teamID   = 3;        // 队伍ID
+}
+
+// 队伍里面的用户信息
+message TeamUserMsg {
+    int64 useID   = 1;              // 用户ID
+    string name   = 2;              // 用户名
+    int32 sex     = 3;              // 性别
+    string icon   = 4;              // 头像
+    uint32 duanweiExp = 5;          // 段位经验
+    int32 iconFrame = 6;            // 头像框(暂时没有备用)
+    int64 enterTime = 7;            // 进入队伍时间(unix秒数)
+    int32 readyStatus = 8;          // 准备状态  同 ReadyStatusType
+    int32 skinID  = 9;             // 用户的皮肤ID
+}
+
+// 队伍信息的同步，按照顺序排列，第一个为队长
+// SC_TEAM_SYNC_TEAM_MSG
+message SyncTeamMsg
+{
+    repeated TeamUserMsg userMsgList = 1;       // 组队玩家信息
+    int32 teamMod = 2;                          // 组队模式
+    string teamID   = 3;                        // 队伍ID
+}
+
+// 新成员进入队伍 ，（除了自己队伍内广播）
+// SC_TEAM_NEWCOMER_ENTER_TEAM
+message NewcomerEnterTeam
+{
+    TeamUserMsg userMsg = 1;                    // 新增成员信息
+}
+
+// 踢出退伍
+// CS_TEAM_KICK_MEMBER_USER
+message KickMemberUser
+{
+    int64 kickUserID = 1;                       // 被踢出的userID
+}
+
+// 玩家自己离开队伍
+// CS_TEAM_USER_LEAVE_TEAM
+message UserLeaveTeam{}
+
+// 玩家离开队伍通知 (队伍内广播)
+// SC_TEAM_USER_LEAVE_TEAM_NOTICE
+message UserLeaveTeamNotice
+{
+    int64 leaveUserID = 1;                      // 离开用户的ID
+}
+
+// 玩家设置准备状态
+// CS_TEAM_SET_READY_STATUS
+message SetReadyStatus
+{
+    int32 setStatusType = 1;                    // 用户设置准备状态  对应ReadyStatusType
+}
+
+// 通知队伍内玩家的准备状态(队伍内广播)
+// SC_TEAM_USER_READY_STATUS_NOTICE
+message UserReadyStatusNotice
+{
+    int64 userID      = 1;          // 用户ID
+    int32 readyStatus = 2;          // 准备状态
+}
+
+// 通知全队的准备状态
+// SC_TEAM_USER_READY_STATUS_NOTICE_ALL_USERS
+message SyncAllUserReadyStatus
+{
+    repeated UserReadyStatusNotice  statusList = 1;      // 队内所有玩家的装备状态列表
+}
+
+// 队长设置场次, (设置模式)
+// CS_TEAM_LEADER_SET_MODE
+message LeaderSetMode
+{
+    int32 modeID = 1;               // 模式ID
+}
+
+// 模式通知，（组队内部广播）
+// SC_TEAM_SYNC_MODE_NOTICE
+message SyncModeNotice
+{
+    int32 modeID = 1;               // 模式ID
+}
+
+// 开始进入匹配
+// CS_TEAM_ENTER_MATCHING
+message EnterMatching
+{
+}
+
+
+message MatchingFailReason 
+{
+    int64 userID = 1; 
+    int32 userErrCode = 2;           // 错误码        
+    
+}
+
+// 进入到匹配状态
+// SC_TEAM_ENTER_MATCHING_STATUS
+message EnterMatchingStatus 
+{
+    int32 errCode = 1;                        // 0为进入到匹配中
+    repeated MatchingFailReason reasons = 2;  // 失败原因列表
+    int32 failVal = 3;                       // 失败的数值
+}
+
+// 用户取消匹配
+// SC_TEAM_CANCEL_MATCHING
+message CancelMatching 
+{
+    int64 cancelUserID = 1;
+}
+
+// 发起聊天招募
+// CS_TEAM_CHAT_RECRUIT
+message ChatRecruit
+{
+    repeated int32 chatTypes = 1;            // 频道列表
+    int32 modeID = 2;                     // 模式ID
+    string text = 3;                      // 组队的文本信息(客户端需要限制文本长度)
+}
+
+// 招募信息 （添加到聊天数据里面）
+message RecruitMsg
+{
+    int32      modeID = 1;                      // 模式ID
+    string     recruitID =2;                    // 招募ID
+    int32      totalPopulation = 3;             // 总人口数
+    int32      curPopulation = 4;               // 当前人口数
+    int64      recruitTime = 5;                 // 发起招募时间
+    string     text = 6;                        // 招募文本信息
+    int64      userID = 7;                       // 招募者ID
+}
+
+// 回复招募信息
+// CS_TEAM_REPLY_RECTUIT 
+message ReplyRecruit 
+{
+    string  recruitID = 1;                     // 招募ID
+    int64   recruitUserID = 2;                 // 招募者ID
+}

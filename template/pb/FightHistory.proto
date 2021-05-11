@@ -1,0 +1,61 @@
+syntax = "proto3";//指定版本信息
+package protobuf;//包名
+option go_package = ".;protobuf";
+
+message HistoryBattleGroup{
+    uint32 groupID = 1; //羁绊id
+    uint32 level	= 2;  //羁绊等级
+    uint32 roleNum = 3; //羁绊数量
+}
+
+message HistoryRoleData {
+  uint32 roleId = 1;		//棋子id
+  uint32  start	=2;	    //星级
+}
+
+message UserHistoryData {
+    string  uid = 1;
+    string  name = 2;               // 名字
+    string  icon = 3;               // 头像
+    uint32  frame = 4;              // 边框
+    uint32	rank = 5;								// 排名
+    uint32	danExp = 6;							// 当前段位经验
+    uint32  maxDanExp  = 7;					// 本等级最大经验
+    int32  gainDanExp = 8; 				// 增加的段位经验
+    uint32  getGold = 9;						// 玩家获得金豆
+    repeated HistoryBattleGroup	fetter = 10;			// 羁绊信息
+    repeated HistoryRoleData  roleList = 11;		  // 棋子信息
+}
+
+message DataSimple {
+  int32     fightId = 1;    //战绩ID
+  uint32    modelId	= 2;    //模式ID
+  int64     startTime = 3;  //战斗开始时间
+  UserHistoryData selfData = 4; //战绩中玩家的数据
+}
+
+//请求简略战绩信息
+//CS_GET_HISTORY_SIMPLE
+message RequestHistorySimple{
+  int32 startPos  = 1;      //开始位置
+  int32 endPos    = 2;      //结束位置
+  int32 modelId   = 3;      //模式筛选 0时，全部模式
+  int64 uid       = 4;      //玩家ID，0时，是自己
+}
+//CS_GET_HISTORY_SIMPLE回调
+message HistoryDataSimple{
+  repeated DataSimple listData = 1;
+}
+
+//请求详细战绩信息
+//CS_GET_HISTORY_DETAIL
+message RequestHistoryDetail{
+  int32     fightId = 1;      //战绩ID
+}
+//CS_GET_HISTORY_DETAIL回调
+message HistoryDataDetail {
+  int32     fightId   = 1;    //战绩ID
+  uint32    modelId	  = 2;    //模式ID
+  int64     startTime = 3;    //战斗开始时间
+  repeated UserHistoryData listData = 4;
+}

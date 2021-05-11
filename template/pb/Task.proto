@@ -1,0 +1,80 @@
+syntax = "proto3"; //指定版本信息
+package protobuf; //包名
+option go_package = ".;protobuf";
+
+
+// 同步类型
+enum SyncTaskRateType 
+{
+    SYNC_UNKNOWN = 0;               // 未知类型
+    SYNC_ALL  = 1;                  // 同步所有
+    SYNC_PART = 2;                  // 同步部分
+}
+
+// 是否领取奖励
+enum IsGetReward
+{
+    CAN_NOT_GET_REWARD = 0;                 // 未达成不能领取奖励              
+    HAVE_GET_REWARD = 1;                    // 已经领取奖励
+    NOT_GET_REWARD = 2;                     // 达成未领取奖励
+}
+
+
+// 任务类型信息
+message TaskMsg
+{
+    uint32   taskID = 1;                      // 任务ID
+    int32   argument = 2;                     // 任务对应进度
+    int32   isGetReward = 3;                  // 是否领取奖励  同 IsGetReward
+}
+
+// 同步任务信息
+// SC_TASK_SYNC_TASK_MSG
+message SyncTaskMsg
+{
+    int32     syncType         = 1;                     // 同步类型     SyncTaskRateType
+    repeated  TaskMsg taskList = 2;                // 任务列表
+}
+
+// 同步任务活跃度
+// SC_TASK_SYNC_TASK_ACTIVITY
+message SyncTaskActivity
+{
+    uint32 dayActivity      = 1;                    // 日活跃度
+    uint32 weekActivity     = 2;                    // 周活跃度
+}
+
+// 领取任务奖励
+// CS_TASK_GET_REWARD
+message GetReward 
+{
+    uint32 taskID     = 1;                        // 领取奖励
+}
+
+// 日活跃度奖励
+// SC_TASK_DAY_ACTIVITY_REWARD
+message DayActivityReward
+{
+    repeated int32 rewardList     = 1;                         // 奖励状态列表
+}
+
+// 周活跃度奖励
+// SC_TASK_WEEK_ACTIVITY_REWARD
+message WeekActivityReward
+{
+    repeated int32  rewardList    = 1;                         // 奖励状态列表
+}
+
+// 领取日活跃度奖励
+// CS_TASK_GET_DAY_ACTIVITY_REAWARD
+message GetDayActivityReaward
+{
+    int32 index = 1;                                            // 奖励位置从0开始
+}
+
+// 领取周活跃度奖励
+// CS_TASK_GET_WEEK_ACTIVITY_REAWARD
+message GetWeekActivityReaward
+{
+    int32 index = 1;                                             // 奖励位置从0开始
+}

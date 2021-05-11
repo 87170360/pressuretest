@@ -1,0 +1,24 @@
+syntax = "proto3";//指定版本信息
+package protobuf;//包名
+option go_package = ".;protobuf";
+
+message FightRoleData {
+  uint32 	id  =	1;			        //棋子配置表id
+  uint32 	proficiVal = 2;       //熟练度值
+  uint32  upCount = 3;          //出场次数
+  uint32  winCount = 4;         //胜利次数
+  uint32  chamCount = 5;        //冠军次数
+}
+
+message FightUserData{
+  uint32 count = 1;             //出场次数
+  uint32  winCount = 2;         //胜利次数
+  uint32  chamCount = 3;        //冠军次数
+}
+
+//SC_FIGHT_ROLE_AND_USER_DATA 熟练度数据
+message FightUserRoleData
+{
+  repeated FightRoleData roleDatas = 1;	//棋子数据
+  FightUserData userData = 2;           //玩家数据
+}

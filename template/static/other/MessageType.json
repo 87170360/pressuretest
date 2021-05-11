@@ -1,0 +1,10 @@
+{
+  "Fight/settingReq": [
+    "SaveCustomInfoReq",
+    "./template/pb/UserInfo.proto"
+  ],
+  "Hall/getMessage": [
+    "GetCustomInfoReq",
+    "./template/pb/UserInfo.proto"
+  ]
+}

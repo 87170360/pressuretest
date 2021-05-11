@@ -1,0 +1,137 @@
+syntax = "proto3"; //指定版本信息
+package protobuf; //包名
+option go_package = ".;protobuf";
+
+import "BattleCommon.proto";
+
+message ChessPlayerData
+{
+	uint32 confID = 1;
+	uint32 resId = 2;
+}
+
+// 发送战场基本信息
+message BattlePlayerBasicProp
+{
+	string  uid = 1;										// 玩家的uid
+	string name = 2;									// 玩家的名字
+	string icon = 3;									// 玩家的图标
+	uint32 headFrame = 4;								// 头像框
+	uint32 danExp = 5;								  // 段位经验
+	uint32 flagIcon = 6;								// 国旗图标
+	uint32 boardID = 7;								    // 棋盘ID
+	uint32 boardResID = 8;								// 棋盘资源ID
+	uint32 order = 9;									// 一个整形参数, 目前只有HP属性的时候用了
+	uint32 level = 10;                                   // 等级
+	bool   sex = 11;                                     // true:male|false:female
+	uint32 smallDanLevel = 12;							// 小段位
+	uint32 initHp = 13;									// 初始血量
+	uint32 crystal = 14; 								// 水晶值
+	uint32 hp = 15;										// 血量
+	ChessPlayerData playerData = 16;					//棋手id
+	uint32 population = 17;								//人口
+}
+
+// 战场的基本信息
+// SC_BATTLE_BASIC_INFO
+message BattleBasicInfoNotify
+{
+	uint32 fightType = 1;								//战斗类型
+	uint32 fightID = 2;							        //战斗id
+	//string curUid = 3;									//当前玩家的pdbid
+	repeated BattlePlayerBasicProp playerList = 4;		// 玩家列表
+	uint32 battleSessionID = 5;			  				//当前玩家的战场会话ID,保存以用来断线重连以及其他作用
+}
+
+// 战斗Loading
+// CS_LOADING
+message LoadingRequest
+{
+	uint32 progress = 1;
+}
+
+// Loading 进度通知
+// SC_LOADING
+message LoadingResponse
+{
+	message LoadingUnit
+	{
+		string uid = 1;									// 玩家ID
+        uint32 progress = 2;							// 进度
+        //uint32 loadingSeq = 3;                          // 进入loading的, deprecated
+	}
+	repeated LoadingUnit loadingList = 3;
+}
+
+//////////////////////////////////////////////////////////////////////////
+// 客户端准备完成
+// CS_READY
+message ClientReadyRequest
+{
+
+}
+
+//
+// SC_READY
+message ClientReadyResponse
+{
+
+}
+
+// 战斗开始通知
+// SC_BATTLE_START
+message BattleStartNotify {}
+
+//////////////////////////////////////////////////////////////////////////
+// 战斗结果通知
+message BattleResultUnit
+{
+	string uid = 1;
+	uint32 danExp = 2;									// 当前段位经验
+	uint32 maxDanExp = 3;								// 本等级最大经验
+	int32 gainDanExp = 4;								// 增加的段位经验
+	uint32 totalChessManNun = 5;						// 总共棋手个数
+	uint32 topHistoryContineWin = 6;					// 本局历史最高连胜
+	uint32 rank = 7;									// 排名
+	LineupUnit lineup = 8;								// 阵容信息
+	repeated BattleGroupInfo fetter = 9;				// 羁绊信息
+	uint32 knockOutRoundNum = 10;						// 淘汰的回合数
+	uint32 winCount = 11;								// 胜利回合数
+	uint32 loseCount = 12;								// 失败回合数
+	uint32 totalKillHeroCount = 13;						// 击杀英雄总数
+	uint32 totalResidueHeroCount = 14;					// 剩余英雄总数
+	uint32 aliveElapseSec = 15;							// 当前玩家持续了多长时间
+	uint32 totalElapseSec = 16;							// 战斗总共持续时间
+	uint32 hp = 17;										// 当前玩家血量
+	uint32 order = 18;									// 玩家order顺序
+	uint32 baseGold = 19;								// 玩家基础池获得金豆
+	uint32 rateGold = 20;								// 玩家倍率池获得金豆
+	uint32 totalChessHurt = 21;					// 玩家对棋手的伤害
+}
+
+// 棋子加成信息
+message BattleResultGold
+{
+	uint32 roleId = 1;		//棋子id
+	float rate = 2;				//倍率
+}
+
+// SC_BATTLE_RESULT
+message BattleResultNotify
+{
+	string uid = 1;									// 玩家的ID
+	uint32 rank = 2;                    				// 排名
+	repeated BattleResultUnit resultList = 3;			// 结果列表
+	repeated BattleResultGold roleList = 4;			//三星棋子加注信息
+	bool isAddGold = 5;		//是否开启加注
+	float addTimes = 6;		//倍数加成
+	uint32 basePool = 7;	//基础池
+	uint32 ratePool = 8;	//倍率池
+	uint32 baseScore = 9; //底分
+	uint32 baseTimes = 10;//基础倍数
+}
+
+//////////////////////////////////////////////////////////////////////////
+// 战斗结束通知
+// SC_BATTLE_FINISH
+message BattleFinishNotify {}

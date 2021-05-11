@@ -1,0 +1,63 @@
+syntax = "proto3";//指定版本信息
+package protobuf;//包名
+option go_package = ".;protobuf";
+
+
+//邮件奖励
+message MailReward{
+	uint32 	typeId				= 1;				//类型ID
+	uint32 	propId				= 2;				//道具ID
+	int64 	propNumber			= 3;				//道具数量
+}
+
+//SC_ADD_MAIL 添加邮件
+message MailData {
+	uint32 	mailId 				= 1;				//邮件ID
+	string	name  				= 2;				//邮件名字
+	string	content 			= 3;	           	//邮件内容
+	repeated MailReward enclosure= 4;				//邮件附件
+	string	mailFrom  			= 5;				//邮件来自哪里
+	int64	mailTime			= 6;				//邮件时间
+	bool	read  				= 7;      			//是否已读	
+	bool	received  			= 8;      			//是否已领取附件	
+}          
+
+//SC_GET_MAIL_INFO 全部邮件信息
+message TotalMailData
+{
+	repeated MailData mailList = 1;					//全部邮件信息
+}
+
+//SC_MAIL_FULL  //邮件满了
+message MailFullData
+{
+	bool	mailFull  			= 1;      			//邮件是否已满
+}
+
+
+//CS_MAIL_READ  //邮件已读
+message MailReadData
+{
+	uint32	mailId  			= 1;      			//邮件已读
+}
+
+//CS_DELETE_MAIL  //删除邮件
+message DeleteMailData
+{
+	repeated uint32	mailId  	= 1;      			//删除邮件
+}
+
+//CS_RECEIVE_MAIL  //领取邮件附件
+message ReceiveMailData
+{
+	repeated uint32	mailId  	= 1;      			//领取邮件附件
+}
+
+//SC_DELETE_MAIL_INFO  //推送删除邮件
+message DeleteMailInfo
+{
+	repeated uint32	mailId  	= 1;      			//删除邮件
+}
+
+
+

@@ -1,0 +1,44 @@
+syntax = "proto3";//指定版本信息
+package protobuf;//包名
+option go_package = ".;protobuf";
+
+enum RankType
+{
+  RANK_TYPE_DUANWEI = 0;   //段位排行
+  RANK_TYPE_QISHENG = 1;   //棋圣排行
+  RANK_TYPE_MAX = 2;       //有新增加，往后移
+}
+
+//获取段位排行榜
+//CS_RANK_GET_DATA
+message GetDuanWeiRank{
+  int32 startPos = 1;    //开始
+  int32 endPos = 2;      //结束
+  int32 rankType = 3;    //排行类型 RankType
+}
+
+message RankUser {
+  int32 	rank 	  	=	1;		//名次
+  int64   uid       = 2;    //uid
+  string 	name 	  	=	3;		//角色名
+  int32 	sex 		  =	4;		//性别
+  string 	HeadIcon  =	5;	  //图标
+  int32   level     = 6;    //段位等级
+  bool    isQiSheng = 7;    //是否是棋圣
+}
+
+//SC_RANK_SEND_DATA
+// 排行榜数据
+message RankData
+{
+  repeated RankUser users = 1;	//排行列表
+  int32 selfRank = 2;           //自己排名
+  int32 rankType = 3;           //排行类型 RankType
+}
+
+//SC_RANK_IS_IN_QISHENG
+// 推送是否在棋圣排行榜
+message RankIsInQiShengRes
+{
+  bool isInRank = 1;
+}

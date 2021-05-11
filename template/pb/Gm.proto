@@ -1,0 +1,9 @@
+syntax = "proto3";//指定版本信息
+package protobuf;//包名
+option go_package = ".;protobuf";
+message GmData//Gm数据
+{
+	string msgId = 1;		//Gm消息id
+	string moduleName = 2;	//模块Name
+	string data = 3;		//Gm消息数据
+}

@@ -1,0 +1,74 @@
+syntax = "proto3";//指定版本信息
+package protobuf;//包名
+option go_package = ".;protobuf";
+//角色释放技能协议
+//SC_USE_SKILL
+message UseSkill {
+	uint32 attackerId = 1;//攻击者ID
+	repeated uint32 hurterId = 2;//受击者id，0表示没有受击者
+	uint32 skillId = 3;//技能id
+	int32 attackerHp = 4;//攻击者血量,放技能可能会用血量来做消耗数值
+	int32 attackerMp = 5;//攻击者蓝量
+	int32 targetCol = 6; //目标位置列,0：表示没有坐标
+	int32 targetRow = 7; //目标位置行,0：表示没有坐标
+}
+//角色受伤协议
+//SC_HURT
+message RoleHurt{
+	repeated RoleHurter hurters = 1;
+}
+
+message RoleHurter {
+	int32   	attackType = 1;		//受伤攻击类型，主要包括：1技能攻击，2特效攻击 3BUFF攻击 4、触发器攻击
+	uint32 		attackTypeId = 2;	//攻击类型的id
+	uint32 		roleId = 3;			//角色id
+	int32 		dtHp = 4;			//变更的hp
+	uint32 		hp = 5;				//角色所拥有的hp
+	int32 		dtMp = 6;			//变更的mp
+	uint32 		mp = 7;				//mp
+	bool 	  	isDeath = 8;		//是否死亡，这里告诉客户端是因为血量为0不一定会死亡，还有可能会复活
+	int32		hitType = 9; 		//击中类型 0 普通命中 1闪避 2暴击 
+	int32 		hurtType = 10; 		//1AD 2AP 3TD 
+	int32 		col = 11; 			//列
+	int32 		row = 12;			//行
+	uint32 		attackerId = 13;	//攻击者id
+}
+
+//取消技能
+//SC_CANCLE_SKILL
+message CancelSkill{
+	uint32 roleId = 1;
+	uint32 skillId = 2;
+}
+
+//取消技能
+//SC_MOVE
+message Move{
+	uint32 roleId = 1;
+	uint32 gridId = 2;
+	uint32 time = 3;//移动的总时间(毫秒)
+	uint32 moveType = 4;//移动类型,1:直线移动,2:瞬移,3:跳跃
+}
+//复活
+//SC_REVIVE
+message Revive {
+	uint32 roleId = 1;
+	int32 hp = 2;
+	int32 mp = 3;
+}
+//播放特效的位置
+message PlayEffectPos{
+	float currentPx = 5; //特效当前位置x坐标
+	float currentpy = 6; //特效当前位置y坐标
+	float targetPx = 7;  //特效目标位置x坐标，当且仅当有移动数据时才用
+	float targetPy = 8;  //特效目标位置y坐标，当且仅当有移动数据时才用
+}
+//播放特效
+//SC_PLAY_EFFECT
+message PlayEffect{
+	uint32 effectId = 1; 						//特效id
+	uint32 skillId = 2;  						//技能id
+	uint32 playerId = 3; 						//攻击者id
+	uint32 targetId = 4; 						//目标id
+	repeated PlayEffectPos playEffectPos = 5;	//特效位置
+}

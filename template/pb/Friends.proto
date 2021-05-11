@@ -1,0 +1,194 @@
+syntax = "proto3";//指定版本信息
+package protobuf;//包名
+option go_package = ".;protobuf";
+
+
+// 同步好友列表信息类型
+enum SyncFriendsType
+{
+    SYNC_UNKNOW_TYPE = 0;    // 未知的类型
+    SYNC_TOTAL_TYPE = 1;    // 同步全部好友信息
+    SYNC_PART_TYPE  = 2;    // 同步部分好友信息
+}
+
+// 同步单个好友信息类型
+enum FriendMsgType
+{
+    FRIEND_MSG_TYPE_UNKNOWN = 0;     // 未知的类型
+    FRIEND_MSG_TYPE_ADD    = 1;     // 增加好友信息
+    FRIEND_MSG_TYPE_SUB    = 2;     // 减掉好友信息
+    FRIEND_MSG_TYPE_STATE  = 3;     // 改变好友状态
+    FRIEND_MSG_TYPE_HEART  = 4;     // 改变红心状态
+}
+
+// 搜索好友
+enum FindFriendsType
+{
+    FIND_FRIEND_TYPE_UNKNOWN  = 0;       // 未知类型
+    FIND_FRIEND_TYPE_ID      = 1;       // 根据ID查找好友
+    FIND_FRIEND_TYPE_NAME    = 2;       // 根据好友昵称查找
+}
+
+// 好友状态
+enum FriendState
+{
+    FRIEND_STATE_UNKNOWN    = 0;           // 未知状态
+    FRIEND_STATE_ONLINE     = 1;           // 空闲中
+    FRIEND_STATE_PLAYING    = 2;           // 游戏中
+    FRIEND_STATE_GROUPING   = 3;           // 组队中
+    FRIEND_STATE_TEAM       = 4;           // 队伍中
+    FRIEND_STATE_OFFLINE    = 5;           // 已下线
+}
+
+// 找到好友的方式
+enum FindFriendsWay
+{
+    FIND_FRIENDS_WAY_UNKNOWN        = 0;            // 未知方式
+    FIND_FRIENDS_WAY_BY_ID          = 1;            // 根据ID查找
+    FIND_FRIENDS_WAY_BY_NAME        = 2;            // 根据昵称查找
+}
+
+// 红心是否可领取
+enum IsCanGetHeart
+{
+    NOT_GET_HEART  = 0;         // 不能领取
+    CAN_GET_HEART = 1;         // 可以领取
+    BEEN_GET_HEART = 2;        // 领取过
+}
+
+// 是否可赠送红心
+enum IsCanGiveHeart
+{
+    NOT_GIVE_HEARD = 0;         // 不可以送红心
+    CAN_GIVE_HEART = 1;         // 可以送红心
+    BEEN_GIVE_HEART = 2;        // 赠送过
+}
+
+
+// 好友信息
+message FriendMsg
+{
+    int64   uid  = 1;                       // 用户ID
+    string  name = 2;                       // 昵称
+    string  icon = 3;                       // 头像
+    string  plat = 4;                       // 平台 (预留)
+    int32   sex  = 5;                       // 性别 1 男 2女
+    int32   dan  = 6;                       // 段位
+    int32   state = 7;                      // 好友状态  对应FriendState
+    int32   friendType  = 8;                // 类型 （增加或删除） 对应 FriendMsgType
+    int32   isNewAdd = 9;                   // 是否是新添加 1 是新添加, 0 不是新添加 （用户登录的时候使用）
+    int32   getHeart  = 10;                 // 是否可领取,对应IsCanGetHeart
+    int32   giveHeart = 11;                 // 是否可赠送红心，对应 IsCanGiveHeart
+    string  nationality = 12;               // 国籍
+    int32 iconFrame = 13;                   // 头像框
+}
+
+// 查找到的好友信息
+message CanFindFriendMsg
+{
+    int64    uid  = 1;                      // 用户ID
+    string  name  = 2;                      // 用户名
+    string  icon  = 3;                      // 头像
+    int32   findWay = 4;                    // 找到的方式 同FindFriendsWay
+    int32   dan = 5;                        // 段位
+    string  nationality = 6;                // 国籍
+    int32   state = 7;                      // 状态  对应FriendState
+}
+
+
+// 同步好友列表信息
+// SC_FRIENDS_SYNC_FRIENDS_LIST
+message SyncFriendsList
+{
+    int32     syncType  =  1;               // 更新类型 对应 SyncFriendsType
+    repeated FriendMsg  friendList = 2;         // 好友列表
+    repeated FriendMsg  applyList = 3;          // 申请列表
+    repeated FriendMsg  blackList = 4;          // 屏蔽列表
+}
+
+// 申请添加好友
+// CS_FRIENDS_APPLY_ADD_FRIEND
+message ApplyAddFriend
+{
+    int64   applyID   = 1;                     // 添加好友ID
+}
+
+// 同意申请
+// CS_FRIENDS_AGREE_APPLY
+message AgreeFriendApply
+{
+    int64  applyUserID  = 1;                 // 同意用户ID
+}
+
+// 拒绝别人申请
+// CS_FRIENDS_REFUSE_APPLY
+message RefuseFriendApply {
+    repeated int64  userIDList = 1;           // 拒绝申请列表
+}
+
+
+// 删除好友
+// CS_FRIENDS_DEL_FRIEND
+message DelFriend
+{
+    int64   friendID   = 1;                     // 删除好友ID
+}
+
+// 屏蔽好友
+// CS_FRIENDS_BLACK_FRIEND
+message BlackFriend
+{
+    int64  friendID   = 1;                      // 屏蔽好友ID
+}
+
+// 取消屏蔽好友
+// CS_FRIENDS_UN_BLACK_FRIEND
+message UnBlackFriend
+{
+    int64  userID    = 1;                       // 取消屏蔽好友ID
+}
+
+// 赠送礼物
+// CS_FRIENDS_GIVE_FRIEND_GIFT
+message GiveFriendGift
+{
+    uint32  giftID   = 1;                       // 赠送礼品ID
+    uint32  giftCount = 2;                      // 赠送礼品数量
+}
+
+// 赠送红心
+// CS_FRIENDS_GIVE_HEART
+message GiveFriendHeart
+{
+    repeated int64  userIDList = 1;
+}
+
+// 领取红心
+// CS_FRIENDS_GET_HEART
+message GetFriendHeart
+{
+    repeated int64  userIDList = 1;
+}
+
+// 一键赠领红心
+// CS_FRIENDS_ONE_BUTTON_GIVE_SEND
+message OneButtonGiveSend
+{
+
+}
+
+
+// ++++++++++++++++++++++++++搜索数据走搜索模块+++++++++++++++++++++++++++++++
+// 搜索好友
+// CS_FRIENDS_FIND_FRIEND
+message FindFriends
+{
+    string searchText   = 1;                      // 搜索文本
+}
+
+// 符合条件的用户搜索列表
+// CS_FRIENDS_FIND_FRIEND 回调
+message CanFindUserList 
+{
+    repeated CanFindFriendMsg  findList  = 1;     // 查找到符合条件的用户列表
+}

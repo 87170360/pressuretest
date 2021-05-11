@@ -1,0 +1,7 @@
+syntax = "proto3";//指定版本信息
+package protobuf;//包名
+option go_package = ".;protobuf";
+message Result//结果
+{
+	int32 errorCode = 1;
+}

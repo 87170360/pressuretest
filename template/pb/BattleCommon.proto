@@ -1,0 +1,26 @@
+syntax = "proto3"; //指定版本信息
+package protobuf; //包名
+option go_package = ".;protobuf";
+
+// 阵型数据单元
+message FormationUnit
+{
+	string roleServerId = 1;								// ID
+	uint32 pos = 2;										// 上阵的位置
+}
+
+// 阵型信息
+message LineupUnit
+{
+	uint32 id = 1;										// 阵型ID
+	repeated FormationUnit formationList = 2;			// 阵型列表
+}
+
+//羁绊信息
+message BattleGroupInfo
+{
+	uint32 groupID = 1;									// 组ID
+	uint32 roleNum = 2;									// 数量
+	uint32 level = 3;									// 等级
+	bool active = 4;									// 是否激活
+}

@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="UTF-8">
+    <title>服务器压测工具</title>
+    <script src="http://libs.baidu.com/jquery/2.1.1/jquery.min.js"></script>
+    <script src="http://cdn.bootcss.com/bootstrap/3.3.0/js/bootstrap.min.js"></script>
+    <script src="/template/static/js/protobuf.min.js"></script>
+    <script src="/template/static/js/pageFun.js"></script>
+    <link rel="stylesheet" href="http://cdn.bootcss.com/bootstrap/3.3.0/css/bootstrap.min.css">
+    <style>
+        .header{
+            width: auto;
+            height: 80px;
+            background: #428bca;
+        }
+        .header h1{
+            width: auto;
+            text-align: center;
+            line-height: 80px;
+            color: white;
+            margin: 0;
+            padding: 0;
+        }
+        .row {
+            margin-right: unset;
+            margin-left: unset;
+        }
+
+        .input-group-addon {
+            background-color: #428bca;
+        }
+
+        .a-upload {
+            display: contents;
+            padding: 4px 10px;
+            height: 20px;
+            line-height: 20px;
+            position: relative;
+            cursor: pointer;
+            color: #ffffff;
+            /*background: #fafafa;*/
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            overflow: hidden;
+            *display: inline;
+            *zoom: 1
+        }
+
+        .a-upload input {
+            position: absolute;
+            right: 0;
+            top: 0;
+            opacity: 0;
+            filter: alpha(opacity=0);
+            cursor: pointer;
+            width: 80px;
+            height: 30px;
+        }
+
+        .a-upload:hover {
+            color: #ffffff;
+            text-decoration: none
+        }
+
+        .dropdown-menu {
+            width: -webkit-fill-available;
+            /*margin-top:-280px*/
+        }
+    </style>
+</head>
+<body>
+<div class="header">
+    <h1>服务器压测工具</h1>
+</div>
+<div class="panel panel-default">
+    <div class="panel-body">
+        <a class="btn btn-primary btn-sm" href="/index" style="width: 70px">返回</a>
+        <input type="text" class="form-control " placeholder="人数" style="width:120px;display:unset;"
+               aria-describedby="basic-addon1" value="1">
+        <a class="btn btn-primary btn-sm glyphicon glyphicon-step-forward" href="#" onclick="playAccountMsgType(this)"
+           id="btnPLAY" style="display: inline-block" title="执行"></a>
+
+        <a class="btn btn-default btn-sm glyphicon glyphicon-stop" href="#" onclick="stop(this)" id="btnSTOP"  title="停止" style="display: none"></a>
+        <!-- Button trigger modal -->
+        <a type="button" class="btn btn-primary btn-sm glyphicon glyphicon-plus" data-toggle="modal"
+           data-target="#myModal" onclick="openModal()" title="添加新协议"></a>
+
+        <span class="btn btn-primary btn-sm  glyphicon glyphicon-cloud-upload " title="上传MessageType.lua文件">
+            <a href="javascript:void(0);" class="a-upload"><input type="file" onchange="uploadMsgTypeFile(this)"
+                                                                  style="width:200px">上传MessageType.lua文件</a></span>
+
+        <span class="btn btn-primary btn-sm  glyphicon glyphicon-cloud-upload " title="批量上传pb文件">
+            <a href="javascript:void(0);" class="a-upload">
+                <input type="file" multiple="multiple" onchange="uploadFile(this,false)" style="width:100px;" />上传pb文件
+            </a>
+        </span>
+    </div>
+
+    <div class="row">
+        <div class="col-md-12">
+            <!-- Table -->
+            <table class="table"></table>
+            <table class="theadTemp" style="display: none">
+                <thead>
+                <tr>
+                    <th style="width: 50px"><a class="btn btn-default btn-sm glyphicon glyphicon-heart" href="#"
+                                               onclick="CheckAll(this)" role="button" title="是否全部选择"></a></th>
+                    <th>MsgType</th>
+                    <th>间隔时间</th>
+                    <th>备注</th>
+                    <th>协议结构体名称</th>
+                    <th>pb文件</th>
+                    <th></th>
+                </tr>
+                </thead>
+            </table>
+        </div>
+        <div class="col-md-4 panel panel-warning" style="display:none">
+            <div class="panel-body"><strong>自定义</strong></div>
+        </div>
+    </div>
+
+    <!-- Modal -->
+    <div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span
+                            aria-hidden="true">&times;</span></button>
+                    <h4 class="modal-title" id="myModalLabel">MessageType Item Add</h4>
+                </div>
+                <div class="modal-body">
+
+                    <form>
+                        <input type="text" class="form-control" id="msgId" style="display:none">
+                        <input type="text" class="form-control" id="msgData" style="display:none">
+                        <div class="form-group">
+                            <label>MsgType</label>
+                            <input type="text" class="form-control" id="playUrl">
+                        </div>
+                        <div class="form-group">
+                            <label>时间(单位毫秒)(距离上条协议发送的时间间隔)</label>
+                            <input type="number" class="form-control" id="playTime">
+                        </div>
+                        <div class="form-group">
+                            <label>pb协议文件</label>
+                            <div class="input-group">
+                                <!-- Single button //<span class="caret"></span> -->
+                                <button type="button" class="btn btn-default dropdown-toggle form-control" id="uploadPb"
+                                        data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"></button>
+                                <ul class="dropdown-menu" id="dropdown-menu-files"></ul>
+                                {{/*<input type="text" class="form-control" id="uploadPb" disabled>*/}}
+                                <span class="input-group-addon btn btn-primary btn-sm  glyphicon glyphicon-cloud-upload" title="批量上传pb文件">
+                                    <a href="javascript:;" class="a-upload">
+                                        <input type="file" multiple="multiple" onchange="uploadFile(this,true)">
+                                    </a>
+                                </span>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label>协议结构体名称</label>
+                            {{/*<input type="text" class="form-control" id="structName" onblur="loadContent()">*/}}
+                            <div class="input-group">
+                                <button type="button" class="btn btn-default dropdown-toggle form-control"
+                                        id="structName" data-toggle="dropdown" aria-haspopup="true"
+                                        aria-expanded="false"></button>
+                                <ul class="dropdown-menu" id="dropdown-menu-names"></ul>
+                                <span class="input-group-addon glyphicon glyphicon-list"
+                                      style="display: table-column-group"></span>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label>Content [ json ] <span class="input-err-msg" id="input-err-msg"
+                                                          style="color: red"></span></label>
+                            <textarea rows="10" cols="20" class="form-control" id="playContent"
+                                      style="max-width: 100%;min-width: 100%"></textarea>
+                        </div>
+                    </form>
+
+                </div>
+                <div class="modal-footer">
+                    <a type="button" class="btn btn-primary" onclick="submit()">Submit</a>
+                    <a type="button" class="btn btn-default" data-dismiss="modal" id="closeModal">Close</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</div>
+</body>
+
+<script>
+
+    loadUserMsgList();
+    window.setInterval(loadUserMsgList, 1000 * 1);
+</script>
+</html>

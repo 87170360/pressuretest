@@ -1,0 +1,11 @@
+syntax = "proto3"; //指定版本信息
+package protobuf; //包名
+option go_package = ".;protobuf";
+
+//伤害类型
+enum HURT_TYPE
+{	
+	HURT_TYPE_AD = 0;	//物理伤害
+	HURT_TYPE_AP = 1;	//魔法伤害
+	HURT_TYPE_TD = 2;	//真实伤害
+}

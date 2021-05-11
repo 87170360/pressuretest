@@ -1,0 +1,28 @@
+syntax = "proto3";//指定版本信息
+package protobuf;//包名
+option go_package = ".;protobuf";
+
+//SC_UPDATE_DUAN_WEI //更新段位数据
+message UpdateDuanWei {
+	uint32 	id		 		=	1;			//段位id
+	uint32 	duanWeiExp 		=	2;			//段位经验
+	uint32 	heroExp 		=	3;			//勇者积分
+}
+
+message DuanWeiData {
+	uint32 	id		 		=	1;			//段位id
+	uint32 	reward	 		=	2;			//奖励信息0不可领取1可领取2已领取
+}
+
+//SC_UPDATE_DUANWEI_REWARD //更新段位奖励
+message DuanWeiReward {
+	repeated DuanWeiData rewardList = 1;			//段位奖励
+	uint32 DuanWeiExpTop = 2; 						//本赛季最高段位经验
+}
+
+
+//CS_RECEIVE_DUANWEI_REWARD		//领取段位奖励
+message Receive_DuanWeiReward_Req
+{
+	uint32 	id		 		=	1;			//段位id
+}

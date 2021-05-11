@@ -1,0 +1,39 @@
+syntax = "proto3";//指定版本信息
+package protobuf;//包名
+option go_package = ".;protobuf";
+
+
+// ----------------------个性装扮--------------
+
+enum DressType
+{
+	DRESSUP_NONE			= 0;
+	DRESSUP_HERO 			= 1; //英雄
+	DRESSUP_CHESS_BOARD 	= 2; //棋盘
+	DRESSUP_CHESS_PLAYER 	= 3; //棋手
+	DRESSUP_ATTACK 			= 4; //掉血攻击特效
+	DRESSUP_HEAD 			= 5; //头像
+	DRESSUP_HEAD_FRAME 		= 6; //头像框
+	DRESSUP_DUANWEI_FRAME 	= 7; //段位框
+	DRESSUP_HONOUR 		= 8; //称号
+}
+
+// CS_DRESS_USER_CONTAIN
+message DressRes {
+	repeated DressData dressPlayerList = 1; // 玩家拥有的棋手装扮
+	repeated DressData dressBoardList = 2;	// 玩家拥有的棋盘装扮
+}
+
+// 不同类型的装扮数据表单
+message DressData {
+	int32 dressId = 1;		//装扮ID
+	int64 UseEndTime = 2; 	//使用结束时间
+}
+
+
+// SC_DRESS_RED 		 红点系统通知
+// CS_DRESS_USER_CHANGE  换装请求设置：respone > Result
+message DressChangeReq {
+	uint32 dressType = 1;		// DressType
+	uint32 dressId = 2;
+}

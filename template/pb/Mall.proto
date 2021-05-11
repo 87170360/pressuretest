@@ -1,0 +1,60 @@
+syntax = "proto3"; //指定版本信息
+package protobuf; //包名
+option go_package = ".;protobuf";
+
+
+//商品信息
+message GoodsInfo
+{
+  uint32 id = 1;        //商品配置ID
+  int32 buyCount = 2;   //已经购买次数
+}
+
+//特定商城的信息
+message MallInfo
+{
+  uint32 MallType = 1;              //商城类型 MallConf配置的mallId
+  repeated GoodsInfo goodsList = 2; //商品列表
+  int32 refreshCount = 3;           //已经刷新次数
+}
+
+//获取商城
+//CS_MALL_GET_INFO
+message MallGetInfoRequest
+{
+  uint32 MallType = 1;            //商城类型 MallConf配置的mallId
+}
+
+//CS_MALL_GET_INFO
+message MallGetInfoResponse
+{
+  MallInfo mallInfo = 1;          //商城信息
+  int64 refreshTime = 2;          //剩余刷新时间，秒
+}
+
+//刷新商城
+//CS_MALL_REFRESH
+message MallRefreshRequest
+{
+  uint32 MallType = 1;            //商城类型 MallConf配置的mallId
+}
+
+//CS_MALL_REFRESH
+message MallRefreshResponse
+{
+  int32 errorCode = 1;   //结果
+  MallInfo mallInfo = 2; //刷新后的商城信息
+}
+
+//购买商城商品
+//CS_MALL_BUY
+message MallBuyRequest{
+  uint32 id = 1;      //商品配置ID
+  int32 count = 2;    //购买数量
+}
+
+//CS_MALL_BUY
+message MallBuyResponse{
+  int32 errorCode = 1;     //结果
+  GoodsInfo goodsInfo = 2; //商品信息更新
+}

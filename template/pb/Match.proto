@@ -1,0 +1,60 @@
+syntax = "proto3";//指定版本信息
+package protobuf;//包名
+option go_package = ".;protobuf";
+
+enum MatchType
+{
+	MATCH_TYPE_NONE = 0;
+	NORMAL = 1;	//普通单人匹配
+	ROBOT = 2;	//机器人匹配
+}
+
+//请求匹配
+//CS_MATCH_REQUEST
+//response:Result
+message MatchRequest
+{
+	MatchType matchType = 1; //匹配类型
+	uint32 modeID = 2;		 //匹配场次
+}
+
+//callback 返回
+message MatchRequestRes
+{
+	int32 errorCode = 1;		//错误码
+	int32 recommendModeID = 2;				//推荐场次
+	int32 recommendBagID = 3; //推荐礼包
+}
+
+
+//请求取消匹配
+//CS_CANCEL_MATCH_REQUEST
+//response:Result
+message CancelMatchRequest
+{
+	MatchType matchType = 1; //匹配类型
+}
+
+//请求匹配时间信息
+//CS_MATCH_TIME
+message MatchTimeReq
+{
+}
+
+message MatchTimeData
+{
+		uint32 modeID = 1;		//匹配场次
+		bool   isOpen = 2;		//是否开启
+		uint32 time = 3;			//开启时,即isOpen=true：结束时间   关闭时,即isOpen=false：开始时间
+}
+
+//匹配时间信息返回
+//callback 返回
+message MatchTimeRes
+{
+		repeated MatchTimeData matchdatas = 1;
+}
+
+//匹配结果
+//SC_MATCH_RESULT
+//response:Result
