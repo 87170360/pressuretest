@@ -1,0 +1,12 @@
+{
+  "testAction": {
+    // 刷新装备球
+    "refreshEquipBox": {
+      "prob": 30                  // 刷新概率
+    },
+    // 脱装备
+    "takeOffEquip": {
+      "prob": 30                  // 概率
+    }
+  }
+}
