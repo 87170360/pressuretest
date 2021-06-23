@@ -1,0 +1,20 @@
+syntax = "proto3"; //指定版本信息
+package protobuf; //包名
+option go_package = ".;protobuf";
+
+//CS_ASSETS_CODE_REQ
+message PrizeRequest {
+    string code = 1;
+}
+
+
+//CS_ASSETS_CODE_REQ
+message PrizeResponse {
+    int32   errorCode = 1;
+    repeated  PrizeItem itemCount  = 2;
+}
+
+message PrizeItem {
+    uint32 id = 1;
+    uint32 count = 2;
+}

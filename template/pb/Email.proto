@@ -20,6 +20,8 @@ message MailData {
 	int64	mailTime			= 6;				//邮件时间
 	bool	read  				= 7;      			//是否已读	
 	bool	received  			= 8;      			//是否已领取附件	
+	repeated string replaceTxts = 9;				//替换的文本值	
+	uint32 	mailConfId 			= 10;				//模板邮件ID
 }          
 
 //SC_GET_MAIL_INFO 全部邮件信息

@@ -1,0 +1,156 @@
+syntax = "proto3";//指定版本信息
+package protobuf;//包名
+option go_package = ".;protobuf";
+
+// CS_GET_ROOM_LIST_BY_PAGE // 根据页数获取房间列表
+message GetRoomPageReq
+{
+    uint32 page = 1;        // 请求房间页数
+}
+
+// 房间列表信息回调
+message GetRoomListRes
+{
+    int32 errCode = 1;                // 错误码
+    repeated RoomInfo rooms     = 2;    // 房间列表
+}
+
+//房间信息
+message RoomInfo
+{
+    uint32      id              = 1;    // 房间ID
+    string      name            = 2;    // 房间名
+    uint32      curMember       = 3;    // 当前成员数量
+    uint32      allMember       = 4;    // 总成员数量
+    uint32      score           = 5;    // 底分（应该是门票，入场需要的金豆数量）
+    uint32      base            = 6;    // 奖池基数
+    uint32      reward          = 7;    // 奖金分配（按照配置表顺序来，从1开始）
+    string      creator         = 8;    // 创建者uid
+    string      creatorName     = 9;    // 创建名字
+    uint32      creatorDan      = 10;    // 创建者段位
+    bool        lock            = 11;    // 是否加密
+    bool        hasJoin         = 12;   // 自己已经加入
+    bool        hasStart        = 13;   // 是否已经开赛
+}
+
+//房间详情
+message RoomDetail
+{
+    RoomInfo    room              = 1;    // 房间信息
+    repeated  RoomMember members  = 2;    // 所有成员
+    int64       creatTime         = 3;    // 房间的创建时间(前端显示倒计时的时候使用)
+}
+
+//房间成员
+message RoomMember
+{
+    string      uid             = 1;    // 成员uid
+    string      name            = 2;    // 成员名字
+    uint32      dan             = 3;    // 成员段位
+    uint32      state           = 4;    // 状态 0 等待中 1比赛中 2已淘汰
+}
+
+
+// CS_OPEN_CREATE_ROOM_BUTTON // 打开创建房间界面(此步骤需要服务器返回房间名字)
+// 打开创建面板回调
+message OpenCreateRoomRsp {
+    string roomName             = 1;    // 房间名字
+}
+
+// CS_CREATE_ROOM //创建房间
+message CreateRoomReq
+{
+    string      name	        = 1;    // 房间名
+    string      secret          = 2;    // 房间密码
+    uint32      score           = 3;    // 底分
+    uint32      base            = 4;    // 奖池基数
+    uint32      reward          = 5;    // 奖金分配（按照配置表顺序来，从1开始）
+    uint32      member          = 6;    // 赛事规模（人数）
+}
+
+// CS_BREAK_UP_ROOM // 解散房间
+message BreakupRoom
+{
+    uint32 roomID             = 1;  // 房间ID
+}
+
+// SC_INIT_HAS_ENTER_ROOM    // 初始化已经进入的房间 推送 GetRoomListRes
+
+// CS_GET_SELF_CREAT_ROOM  // 查看自己创建的房间
+// 自己创建的房间回调  GetRoomListRes
+
+// CS_ENTER_ROOM //进入房间
+message EnterRoomReq
+{
+    uint32      roomID              = 1;    // 房间ID
+    string      secret              = 2;    // 密码（或者自己是房主，或者自己已经加入，或者无需密码时为""）
+}
+message EnterRoomRes
+{
+    int32       errCode         = 1;    // 错误码
+    RoomDetail  room            = 2;    // 房间详情
+}
+
+// CS_EXIT_ROOM    // 退出房间
+
+// CS_SEATED_ROOM  // 落座房间
+
+// CS_LEAVE_SEAT   // 离开座位 
+
+// SC_BE_REMOVE_ROOM // 被移除房间
+
+// CS_GET_SELF_ROOM_INFO // 获取自己房间信息
+// 自己所在的房间信息回调 GetRoomListRes
+
+// CS_GET_SELF_ROOM_ID   // 获取自己房间ID
+// 自己房间的ID回调
+message GetSelfRoomIDRes
+{
+    uint32  roomID              =1;     // 自己的房间ID
+}
+
+
+// CS_REMOVE_ROOM_MEMBER //移除房间成员
+message RemoveRoomMemberReq
+{
+    uint32      roomID              = 1;    // 房间ID
+    string      userID              = 2;    // 成员uid
+}
+
+// SC_ADD_ROOM_MEMBER   // 增加房间成员
+message AddRoomMember
+{
+    repeated RoomMember members  =  1;      // 添加房间成员
+}
+
+// SC_SUB_ROOM_MEMBER  // 减少房间成员
+message SubRoomMember
+{
+    repeated string userIDs = 1;            // 减少房间成员
+}
+
+// SC_ROOM_MEMBER_OUT // 推送房间成员淘汰 
+message RoomMemberOut
+{
+    repeated string userIDs = 1;    // 淘汰的成员uid
+}
+
+// CS_SEARCH_ROOM                   // 查找房间信息
+message SearchRoomReq 
+{
+    uint32 roomID  = 1;             // 房间ID
+}
+
+// 搜索房间直接回调  GetRoomListRes
+
+// SC_GAME_START_COUNT_DOWN         // 游戏开始倒计时（发送给落座的玩家）
+
+// SC_GAME_START                    // 游戏已开始(发送给观看的玩家)
+
+// SC_ROOM_BREAK_UP_NOTICE          // 房间被解散通知
+message BreakupRoomNotice
+{
+    uint32 roomID  = 1;             // 解散的房间ID
+}
+
+

@@ -6,7 +6,9 @@ enum RankType
 {
   RANK_TYPE_DUANWEI = 0;   //段位排行
   RANK_TYPE_QISHENG = 1;   //棋圣排行
-  RANK_TYPE_MAX = 2;       //有新增加，往后移
+  RANK_TYPE_WINPOINT = 2;  //胜点排行
+  RANK_TYPE_GOLD = 3;  	   //金币排行
+  RANK_TYPE_MAX = 4;       //有新增加，往后移
 }
 
 //获取段位排行榜
@@ -18,13 +20,14 @@ message GetDuanWeiRank{
 }
 
 message RankUser {
-  int32 	rank 	  	=	1;		//名次
-  int64   uid       = 2;    //uid
-  string 	name 	  	=	3;		//角色名
-  int32 	sex 		  =	4;		//性别
-  string 	HeadIcon  =	5;	  //图标
-  int32   level     = 6;    //段位等级
-  bool    isQiSheng = 7;    //是否是棋圣
+  int32 	rank 	  	= 1;	//名次
+  int64   	uid       	= 2;    //uid
+  string 	name 	  	= 3;	//角色名
+  int32 	sex 		= 4;	//性别
+  string 	HeadIcon  	= 5;	//图标
+  int32   	score     	= 6;    //数值
+  int32   	duanwei     = 7;    //段位
+  bool    	isQiSheng 	= 8;    //是否是棋圣
 }
 
 //SC_RANK_SEND_DATA
@@ -34,6 +37,7 @@ message RankData
   repeated RankUser users = 1;	//排行列表
   int32 selfRank = 2;           //自己排名
   int32 rankType = 3;           //排行类型 RankType
+  int32 comCount = 4;           //大奖赛场次
 }
 
 //SC_RANK_IS_IN_QISHENG

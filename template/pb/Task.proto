@@ -78,3 +78,10 @@ message GetWeekActivityReaward
 {
     int32 index = 1;                                             // 奖励位置从0开始
 }
+
+// 新手引导任务
+// CS_TASK_NEW_PLAYER_GUIDE_ID
+message NewPlayerGuideID
+{
+    uint32 guideID = 1;                                           // 新手引导ID
+}

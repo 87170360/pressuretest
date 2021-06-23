@@ -3,8 +3,7 @@ package protobuf;//包名
 option go_package = ".;protobuf";
 
 
-// ----------------------个性装扮--------------
-
+// ----------------------个性装扮（对应物品表装扮类型）-------------
 enum DressType
 {
 	DRESSUP_NONE			= 0;

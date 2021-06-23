@@ -1,7 +1,8 @@
 syntax = "proto3";//指定版本信息
 package protobuf;//包名
 option go_package = ".;protobuf";
-message EnterCopyRequest//进入副本请求
+//进入副本请求
+message EnterCopyRequest
 {
 	int32 copyId = 1;
 }

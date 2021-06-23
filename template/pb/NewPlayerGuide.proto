@@ -1,0 +1,21 @@
+syntax = "proto3"; //指定版本信息
+package protobuf; //包名
+option go_package = ".;protobuf";
+
+
+// 获取当前进度
+// CS_GET_GUIDE_RATE
+// CS_GET_GUIDE_RATE 回调
+message GetGuideRateRsp {
+    uint32 guideID = 1;             // 引导ID
+}
+
+// 验证奖励是否领取
+// CS_CHECK_GUIDE_AWARD_IS_GET
+message CheckAwardIsGetReq {
+    uint32 guideID = 1;             // 引导ID
+}
+// CS_CHECK_GUIDE_AWARD_IS_GET 回调
+message CheckAwardIsGetRsp {
+    int32 isGet = 1;                // 1 已领取， 0 未领取
+}

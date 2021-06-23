@@ -2,15 +2,15 @@ syntax = "proto3";//指定版本信息
 package protobuf;//包名
 option go_package = ".;protobuf";
 //用户信息
-message UserInfo
+message UserInfo 
 { 
 	string uid = 1;			 //玩家id
 	string userName = 2;	 //用户名
 	string headIcon = 3;	 //头像id或地址
-  	int32 coupon = 6;        //点券
+  int32 coupon = 6;        //点券
 	int32 gold = 5;		     //金豆
 	int32 silver = 4;		 //银豆
-  	int32 love = 7;          //爱心
+  int32 love = 7;          //爱心
 	int32 level = 8;		 //等级
 	string modelResId = 9;   //模型资源id
 	string mapResId = 10;	 //地图资源id
@@ -23,18 +23,37 @@ message UserInfo
 	int32  countryId = 17; 		 //国籍
 	int32  honour = 18; 		 //称号
 	bool	 isQiSheng = 19;	 //是否是棋圣
-	repeated int32 headList = 20;		//拥有头像列表
-	repeated int32 headFrameList = 21;  //拥有头像框列表
-	repeated int32 honourList = 22;		//拥有称号列表
-	int32  heroExp = 23;	//勇者积分
-	int32  playerModelId = 24;// 棋手id
-	int32  boardModelId = 25; // 棋盘id
+	int32  winPoint = 20;		 // 胜点
+	int32  comAward = 21;		 // 赛事奖卷
+	repeated int32 headList = 22;		//拥有头像列表 (弃用后期删掉)
+	repeated int32 headFrameList = 23;  //拥有头像框列表 (弃用后期删掉)
+	repeated int32 honourList = 24;		//拥有称号列表
+	int32  heroExp = 25;	//勇者积分
+	int32  playerModelId = 26;// 棋手id
+	int32  boardModelId = 27; // 棋盘id
+	string identity = 28;	//身份证ID
 }
-//SC_USER_DATA_CHANGE //更新用户信息
-message UpdateUserInfo
+
+message UserHistoryData {
+    string  uid = 1;
+    string  name = 2;               // 名字
+    string  icon = 3;               // 头像
+    uint32  frame = 4;              // 边框
+    uint32	rank = 5;								// 排名
+    uint32	danExp = 6;							// 当前段位经验
+    uint32  maxDanExp  = 7;					// 本等级最大经验
+    int32  gainDanExp = 8; 				// 增加的段位经验
+    int32  getGold = 9;						// 玩家获得金豆
+    repeated HistoryBattleGroup	fetter = 10;			// 羁绊信息
+    repeated HistoryRoleData  roleList = 11;		  // 棋子信息
+}
+
+//更新用户信息
+//SC_USER_DATA_CHANGE
+message UpdateUserInfo 
 {
-	int32 typeId = 1;//属性枚举类型
-	string value = 2;//属性值
+	int32 typeId = 1; //属性枚举类型
+	string value = 2; //属性值
 }
 
 //获取其他玩家信息
@@ -94,3 +113,184 @@ message GetCustomInfoRes {
 // CS_SHARE_GAME
 message ShareGame {}
 
+
+//设置玩家身份信息
+// CS_USER_IDENTITY
+message SetUserIdentity
+{
+	int64 countryId = 1;	//国籍	
+	string identity = 2;	//身份证ID
+}
+
+
+//	充值
+// 	CS_CHARGE_PRICEu
+message ReqChargePrice
+{
+	uint32 price = 1;	
+}
+
+// 玩家已拥有的头像列表
+// SC_USER_OWNER_HEAD_ICON_LIST
+message UserOwnerHeadIconList{
+	int32 type = 1;				   // 更新类型: 1 更新全部, 2 新增部分  3减少
+	repeated string headIconList = 2;     // 头像框列表
+}
+
+// 玩家已拥有的头像框列表
+// SC_USER_OWNER_HEAD_FRAME_LIST
+message UserOwnerHeadFrameList{
+	int32 type = 1;				   // 更新类型: 1 更新全部, 2 新增部分  3减少
+	repeated int32 headFrameList = 2;     // 头像框列表
+}
+
+// 同步当前头像
+// SC_SYNC_CURRENT_HEAD_ICON
+message SyncCurrentHeadIcon {
+	string headIcon  = 1;  			// 当前头像ID
+}
+
+// 同步当前头像框
+// SC_SYNC_CURRENT_HEAD_FRAME
+message SyncCurrentHeadFrame {
+	int32 headFrame = 1; 		 	// 当前头像框
+}
+
+message HistoryBattleGroup{
+    uint32 groupID 	= 1; 	//羁绊id
+    uint32 level	= 2;  	//羁绊等级
+    uint32 roleNum	= 3; 	//角色数量
+}
+
+message HistoryRoleData{
+	uint32 roleId = 1;		//棋子id
+	uint32  start	=2;	    //星级
+	uint32 quality = 3;     //品质
+}
+
+// 获取用户战斗信息统计
+// CS_GET_USER_BATTLE_STATISTICS_INFO
+message GetUserBattleInfoReq {
+	string userID = 1;				// 玩家ID
+	int32 playModeID = 2; 		 	// 玩法模式ID  10000为所有模式
+}
+// CS_GET_USER_BATTLE_STATISTICS_INFO 回调
+message GetUserBattleInfoRsp {
+	int32 battleCount = 1;				// 对战场数
+	int32 winRate = 2; 					// 胜率(万分比)
+	int32 firstRate = 3; 				// 夺冠率(万分比)
+	int32 averageRank = 4; 				// 平均名次
+	int32 lastRank = 5; 				// 近10场排名
+	HistoryBattleGroup group = 6; 		// 常用羁绊信息
+}
+
+// 玩家战斗历史数据
+message UserBattleHistoryMsg {
+    uint32	rank = 1;								// 排名
+    uint32	danExp = 2;								// 当前段位经验
+    uint32  maxDanExp  = 3;							// 本等级最大经验
+    int32  	gainDanExp = 4; 						// 增加的段位经验
+	int32 	getGold = 5;							// 玩家获得金豆
+	int64 	startTime = 6;							// 开始时间
+	int32   modelID = 7;							// 模式ID
+	uint32  fightID = 8;
+    repeated HistoryBattleGroup	fetter = 9;			// 羁绊信息
+    repeated HistoryRoleData  roleList = 10;		  	// 棋子信息
+}
+
+// 获取历史战斗信息
+// CS_GET_USER_BATTLE_HISTORY
+message GetUserBattleHistoryReq {
+	string userID = 1;
+	int32 playModeID = 2; 			 // 玩法模式ID  10000为所有模式
+	uint32 lastFightID = 3; 			 // 上一页最后的ID 第一次获取发送0
+}
+// CS_GET_USER_BATTLE_HISTORY 回调   每次发送20条
+message GetUserBattleHistoryRsp {
+	repeated UserBattleHistoryMsg listData = 1;
+}
+
+//请求详细战绩信息 （从弄历史战绩列表里面打开详情）
+//CS_GET_HISTORY_DETAIL
+message RequestHistoryDetail{
+	int32     fightId = 1;      //战绩ID
+}
+//CS_GET_HISTORY_DETAIL回调
+message HistoryDataDetail {
+	int32     fightId   = 1;    //战绩ID
+	uint32    modelId	  = 2;    //模式ID
+	int64     startTime = 3;    //战斗开始时间
+	repeated UserHistoryData listData = 4;
+}
+
+message FightRoleData {
+	uint32 	id  =	1;			  //棋子配置表id
+	uint32 	proficiVal = 2;       //熟练度值
+	uint32  upCount = 3;          //出场次数
+	uint32  winCount = 4;         //胜利次数
+	uint32  chamCount = 5;        //冠军次数
+  }
+// CS_FIGHT_USER_ROLE_STATISTIC  统计玩家使用角色信息
+message FightUserRoleStatisticReq{
+	string userID = 1;	//棋子数据
+}
+// 回调
+message FightUserRoleStatisticRsp{
+	repeated FightRoleData roleDatas = 1;	//棋子数据
+}
+
+
+
+//  **************下面是旧的协议，新的弄完以后会把下面的删掉、弃用**********************
+
+
+message DataSimple {
+  int32     fightId = 1;    //战绩ID
+  uint32    modelId	= 2;    //模式ID
+  int64     startTime = 3;  //战斗开始时间
+  UserHistoryData selfData = 4; //战绩中玩家的数据
+}
+
+//请求简略战绩信息
+//CS_GET_HISTORY_SIMPLE
+message RequestHistorySimple{
+  int32 startPos  = 1;      //开始位置
+  int32 endPos    = 2;      //结束位置
+  int32 modelId   = 3;      //模式筛选 0时，全部模式
+  int64 uid       = 4;      //玩家ID，0时，是自己
+}
+//CS_GET_HISTORY_SIMPLE回调
+message HistoryDataSimple{
+  repeated DataSimple listData = 1;
+}
+
+// CS_FIGHT_OFTEN_USE_GROUP   玩家经常使用的羁绊
+message FightUserOftenGroupReq {
+	string userID = 1;
+  }
+  // 获取用户常用羁绊回调
+  message FightUserOftenGroupRsp {
+	repeated GroupInfo groupInfos = 1;
+  }
+  
+  message GroupInfo {
+	uint32  playMod = 1;           // 玩法模式
+	int32   groupID = 2;            // 羁绊ID
+	int32   groupLevel = 3;         // 羁绊等级
+  }
+
+
+  
+message FightUserData{
+	uint32 count = 1;             //出场次数
+	uint32  winCount = 2;         //胜利次数
+	uint32  chamCount = 3;        //冠军次数
+  }
+  
+  //SC_FIGHT_ROLE_AND_USER_DATA 熟练度数据
+  message FightUserRoleData
+  {
+	repeated FightRoleData roleDatas = 1;	//棋子数据
+	FightUserData userData = 2;           //玩家数据
+  }
+  

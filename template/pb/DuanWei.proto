@@ -26,3 +26,17 @@ message Receive_DuanWeiReward_Req
 {
 	uint32 	id		 		=	1;			//段位id
 }
+
+//SC_UPDATE_DUAN_WEI_EFFECTS //更新段位特效数据
+message UpdateDuanWei_HeroExp {
+	uint32 	roundExp		 		=	1;			//回合积分
+	uint32 	winTimesExp 			=	2;			//连胜积分
+	uint32 	withFriendExp 			=	3;			//好友组队积分
+	uint32 	HeroExp 				=	4;			//勇者总积分
+}
+
+message UpdateDuanWei_Effects {
+	uint32 	duanWeiBeforeExp		 		=	1;			//段位结算前经验
+	UpdateDuanWei_HeroExp 	heroExp 		=	2;			//勇者积分
+	uint32 	duanWeiAfterExp 				=	3;			//段位结算后经验
+}

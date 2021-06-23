@@ -5,6 +5,7 @@ enum TickoutType {
     TICK_OUT_TYPE_NONE = 0;
     ACCOUNT = 1;//账号顶替
     SERVER_SHUTDOWN = 2;//服务器关闭
+    PLAY_LIMIT  = 3; // 限玩时间到期
 }
 //登录请求
 //CS_USER_LOGIN
@@ -12,6 +13,7 @@ message LoginRequest
 {
     string account = 1; //账号
     string passWord = 2; //密码
+    bool reconnect = 3;//是否断线重连
 }
 //登录回调
 //CS_USER_LOGIN

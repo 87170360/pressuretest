@@ -27,11 +27,12 @@ message RoleHurter {
 	int32 		dtMp = 6;			//变更的mp
 	uint32 		mp = 7;				//mp
 	bool 	  	isDeath = 8;		//是否死亡，这里告诉客户端是因为血量为0不一定会死亡，还有可能会复活
-	int32		hitType = 9; 		//击中类型 0 普通命中 1闪避 2暴击 
-	int32 		hurtType = 10; 		//1AD 2AP 3TD 
+	int32		hitType = 9; 		//击中类型 0 普通命中 1闪避 2暴击
+	int32 		hurtType = 10; 		//1AD 2AP 3TD
 	int32 		col = 11; 			//列
 	int32 		row = 12;			//行
 	uint32 		attackerId = 13;	//攻击者id
+	bool unSkillHurt = 14; //免疫魔法伤害
 }
 
 //取消技能
@@ -71,4 +72,12 @@ message PlayEffect{
 	uint32 playerId = 3; 						//攻击者id
 	uint32 targetId = 4; 						//目标id
 	repeated PlayEffectPos playEffectPos = 5;	//特效位置
+}
+
+//护盾同步
+//SC_SHIELD
+message Shield {
+	uint32 roleId = 1; 							//角色者id
+	int32 magicValue = 2; 						//魔法护盾剩余值
+	int32 anyValue = 3;  						//全护盾剩余值
 }

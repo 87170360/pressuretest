@@ -1,0 +1,43 @@
+syntax = "proto3";//指定版本信息
+package protobuf;//包名
+option go_package = ".;protobuf";
+
+
+message BonusAllocation{
+	uint32 ranking		= 1;
+	uint32 award		= 2;
+}
+
+// CS_GET_A_ROOM //创建房间
+message GetARoomInfo
+{
+	string  	roomName 	= 1;      	 // 房间名称
+	string  	roomCode	= 2;         // 房间密码
+	int64  		ticketNumber= 3;         // 门票数量
+	repeated BonusAllocation rewards= 4; // 用户奖池分配
+	uint32  	matchNumber= 5;          // 参赛人数
+}
+
+// CS_GET_ROOM_NAME //获取房间名称
+message GetRoomName
+{
+	string  	roomName 	= 1;      	 // 房间名称
+}
+
+// CS_DISSOLVE_ROOM //解散房间
+message DissolveRoom
+{
+	int64  		roomId 	= 1;      	 	 // 房间ID
+}
+// CS_ENTER_ROOM //用户进入房间
+message UserEnterRoom
+{
+	int64  		roomId 	  = 1;      	 // 房间ID
+	uint32		userState = 2;			 // 用户状态1参赛2观战
+}
+
+// CS_LEAVE_ROOM //用户离开房间
+message UserLeaveRoom
+{
+	int64  		roomId 	= 1;      	 	 // 房间ID
+}

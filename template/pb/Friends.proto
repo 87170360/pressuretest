@@ -93,6 +93,7 @@ message CanFindFriendMsg
     int32   dan = 5;                        // 段位
     string  nationality = 6;                // 国籍
     int32   state = 7;                      // 状态  对应FriendState
+    int32   sex  = 8;                       // 性别 1 男 2女
 }
 
 
@@ -104,6 +105,13 @@ message SyncFriendsList
     repeated FriendMsg  friendList = 2;         // 好友列表
     repeated FriendMsg  applyList = 3;          // 申请列表
     repeated FriendMsg  blackList = 4;          // 屏蔽列表
+}
+
+// 同步好友当天领取的红心数量
+// SC_FRIEND_GET_HEARTS_TODAY
+message GetHeartsToday
+{
+    uint32 heartCount = 1;                  // 领取到红心的数量
 }
 
 // 申请添加好友
@@ -177,18 +185,26 @@ message OneButtonGiveSend
 
 }
 
+// 全部同意/拒绝
+// CS_FRIENDS_AGREE_OR_REFUSE_ALL
+message AgressOrRefuseAll
+{
+    int32 chooseWay = 1;   // 1全部同意, 2全部拒绝
+}
+
 
 // ++++++++++++++++++++++++++搜索数据走搜索模块+++++++++++++++++++++++++++++++
 // 搜索好友
 // CS_FRIENDS_FIND_FRIEND
 message FindFriends
 {
-    string searchText   = 1;                      // 搜索文本
+    int64  lastUserID   = 1;                      // 每页最后一个玩家ID
+    string searchText   = 2;                      // 搜索文本
 }
 
 // 符合条件的用户搜索列表
 // CS_FRIENDS_FIND_FRIEND 回调
 message CanFindUserList 
-{
+{   
     repeated CanFindFriendMsg  findList  = 1;     // 查找到符合条件的用户列表
 }

@@ -1,50 +1,41 @@
 {
   "appConfig": {
-    "host": ":888",
+    "host": ":898",
     "td": "./template",
     "log": "./logs",
     "userData": "./userData"
   },
-
   "testAction": {
-    "refreshEquipBox": {
-      "mask":"刷新装备球, prob 运行概率百分比, 0 不运行， 100 一定运行",
-      "prob": 100
+    "upgradeLevel": {
+      "mask": "升级棋手等级, prob 运行概率百分比, 0 不运行， 100 一定运行",
+      "prob": 50
     },
-    "chooseEquip": {
-      "mask":"选择装备, prob 运行概率百分比, 0 不运行， 100 一定运行",
-      "prob": 100
+    "refreshEquipBox": {
+      "mask": "刷新装备球, prob 运行概率百分比, 0 不运行， 100 一定运行",
+      "prob": 10
     },
     "takeOffEquip": {
-      "mask":"脱装备, prob 运行概率百分比, 0 不运行， 100 一定运行",
-      "prob": 100
-    },
-    "putOnEquip": {
-      "mask":"穿装备, prob 运行概率百分比, 0 不运行， 100 一定运行",
-      "prob": 100
+      "mask": "脱装备, prob 运行概率百分比, 0 不运行， 100 一定运行",
+      "prob": 0
     },
     "surrender": {
-      "mask":"投降, prob 运行概率百分比, 0 不运行， 100 一定运行",
+      "mask": "投降, prob 运行概率百分比, 0 不运行， 100 一定运行",
       "prob": 0
     },
     "refreshCardStore": {
-      "mask":"刷新商店, prob 运行概率百分比, 0 不运行， 100 一定运行",
-      "prob": 100
+      "mask": "刷新商店, prob 运行概率百分比, 0 不运行， 100 一定运行",
+      "prob": 10
     },
     "rushBuyCard": {
-      "mask":"抢购回合抢购棋子, prob 运行概率百分比, 0 不运行， 100 一定运行",
-      "prob": 50
+      "mask": "抢购回合抢购棋子, prob 运行概率百分比, 0 不运行， 100 一定运行",
+      "prob": 100
     },
-    "buyRoles": {
-      "mask":"购买棋子, prob 运行概率百分比, 0 不运行， 100 一定运行",
-      "prob": 50
-    },
-    "upRole": {
-      "mask":"购买后棋子上阵, prob 运行概率百分比, 0 不运行， 100 一定运行",
-      "prob": 50
+    "sellRoles": {
+      "mask": "出售棋子, prob 运行概率百分比, 0 不运行， 100 一定运行",
+      "prob": 5
     },
     "downRole": {
-      "mask":"购买后棋子上阵, prob 运行概率百分比, 0 不运行， 100 一定运行",
+      "mask": "棋子下阵, prob 运行概率百分比, 0 不运行， 100 一定运行",
       "prob": 50
     }
   }

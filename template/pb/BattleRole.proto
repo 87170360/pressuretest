@@ -6,68 +6,99 @@ option go_package = ".;protobuf";
 //角色信息
 message BattleRoleContext
 {
-	uint32 	star 	 = 1;		//星级
-	uint32	configID = 2;		//角色ID
-	uint32	serverID = 3;		//服务器ID
-	string	ownerUserID = 4;	//拥有者ID
-	int32	maxHp 	= 5;		//
-	int32	hp		= 6;	
-	int32	maxMp	= 7;
-	int32	mp		= 8;
-	int32	atk		= 9;		//攻击力
-	int32	def		= 10;		//护甲
-	int32  	mdef	= 11;		//魔抗
-	int32	mpa		= 12;		//法强
-	int32	atkSpeedRate = 13;  //攻速加成比例*10000
-	repeated uint32 listEquip = 14;
+  uint32  star = 1;    //星级
+  uint32  configID = 2;    //角色ID
+  uint32  serverID = 3;    //服务器ID
+  string  ownerUserID = 4;  //拥有者ID
+  int32  maxHp = 5;    //
+  int32  hp = 6;
+  int32  maxMp = 7;
+  int32  mp = 8;
+  int32  atk = 9;    //攻击力
+  int32  def = 10;    //护甲
+  int32    mdef = 11;    //魔抗
+  int32  mpa = 12;    //法强
+  int32  atkSpeedRate = 13;  //攻速加成比例*10000
+  repeated uint32 listEquip = 14;
 }
 
 //创建角色
 //SC_BATTLE_CREATE_ROLES
 message BattleRole_CreateRoles_Res
 {
-	repeated BattleRoleContext listContext = 1;	//角色信息
+  repeated BattleRoleContext listContext = 1;  //角色信息
 }
 
-enum RolePropID 
+enum RolePropID
 {
-	ROLE_PROP_UNKNOW     = 0;  //未知
-	ROLE_PROP_HP         = 1;  //当前生命
-	ROLE_PROP_MAX_HP     = 2;  //最大生命
-	ROLE_PROP_MP         = 3;  //当前法力值
-	ROLE_PROP_MAXMP      = 4;  //最大法力值
-	ROLE_PROP_ATK        = 5;  //攻击力
-	ROLE_PROP_DEF        = 6;  //护甲
-	ROLE_PROP_MDEF       = 7;  //魔抗
-	ROLE_PROP_MPA        = 8;  //法强
-	PROP_ATK_SPEED 		 = 9;  //攻速加成
-	ROLE_PROP_AI_ID		 = 10; //AI
-	ROLE_PROP_MODEL_ID	 = 11; //模型
+  ROLE_PROP_UNKNOW = 0;  //未知
+  ROLE_PROP_HP = 1;  //当前生命
+  ROLE_PROP_MAX_HP = 2;  //最大生命
+  ROLE_PROP_MP = 3;  //当前法力值
+  ROLE_PROP_MAXMP = 4;  //最大法力值
+  ROLE_PROP_ATK = 5;  //攻击力
+  ROLE_PROP_DEF = 6;  //护甲
+  ROLE_PROP_MDEF = 7;  //魔抗
+  ROLE_PROP_MPA = 8;  //法强
+  PROP_ATK_SPEED = 9;  //攻速加成
+  ROLE_PROP_AI_ID = 10; //AI
+  ROLE_PROP_MODEL_ID = 11; //模型
 }
 
 //SC_BATTLE_ROLE_UPDATE_PROPS
 message BattleRole_UpdateProps
-{	
-	message propinfo
-	{
-		uint32 propID = 1;
-		int32  propValue = 2;
-		string strValue = 3;	//模型ID、
-	}
-	uint32 svrID = 1;
-	repeated propinfo listProp = 2;
-	repeated int32   listEffectID = 3;	//正数增加，负数移除
+{
+  message propinfo
+  {
+    uint32 propID = 1;
+    int32  propValue = 2;
+    string strValue = 3;  //模型ID、
+  }
+  uint32 svrID = 1;
+  repeated propinfo listProp = 2;
+  repeated int32   listEffectID = 3;  //正数增加，负数移除
+}
+
+//战斗结束重置棋子属性
+//SC_BATTLE_ROLE_RESET_PROPS
+message BattleRole_ResetProps
+{
+  message RoleInfo
+  {
+    uint32 svrID = 1; //唯一ID
+    int32 hp = 2;  //当前生命
+    int32 maxHp = 3;  //最大生命
+    int32 mp = 4;  //当前法力值
+    int32 maxMp = 5;  //最大法力值
+    int32 atk = 6;  //攻击力
+    int32 def = 7;  //护甲
+    int32 magicDef = 8;  //魔抗
+    int32 mpa = 9;  //法强
+    int32 speedRate = 10;  //攻速加成万分比
+    int32 rangeRange = 11;  //攻击距离加成
+  }
+  repeated RoleInfo listRole = 1;
 }
 
 //召唤
 //SC_BATTLE_SUMMON
 message BattleRole_SummonRes
 {
-	message SummonInfo
-	{
-		BattleRoleContext roleInfo = 1;
-		int32 gridIndex  = 2;	
-		uint32 scenesID  = 3;	//场景ID
-	}
-	repeated SummonInfo listInfo = 1;
+  message SummonInfo
+  {
+    BattleRoleContext roleInfo = 1;
+    int32 gridIndex = 2;
+    uint32 scenesID = 3;  //场景ID
+  }
+  repeated SummonInfo listInfo = 1;
+}
+
+//复活开始
+//SC_BATTLE_REVIVE
+message BattleRole_Revive
+{
+  uint32 serverID = 1; //角色服务器ID
+  int64 delay = 2; //复活等待时间毫秒
+  int32 hp = 3; //复活后血
+  int32 mp = 4; //复活后蓝
 }

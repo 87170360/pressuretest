@@ -1,0 +1,44 @@
+syntax = "proto3";//指定版本信息
+package protobuf;//包名
+option go_package = ".;protobuf";
+
+
+//大奖赛玩家晋级成功数据
+//SC_BIGAWARD_USER_PRO_SUCC
+message CompetitionSuccData
+{
+  repeated CompetitionState comList = 1;
+  uint32 selfFightId = 2;  // 自己战斗场次id
+  uint32 topNum = 3;       // 多少强
+}
+
+message CompetitionState
+{
+  uint32 fightId = 1;
+  uint32 startTime = 2; // 比赛开始时间
+  uint32 liveNum = 3;   // 存活
+}
+
+//大奖赛战场人数变化
+//SC_BIGAWARD_USER_NUM
+message CompetitionStateData
+{
+  uint32 fightId = 1;
+  uint32 liveNum = 2;   // 存活
+}
+
+message ComProUser
+{
+  string name = 1;
+  string icon = 2;
+  uint32 headFrame = 3;
+  uint32 danExp = 4;
+}
+
+//大奖赛晋级后战斗即将开始信息
+//SC_BIGAWARD_FIGHT_BEGIN
+message ComProBeginInfo
+{
+  repeated ComProUser userList = 1; // 晋级玩家
+  int32 startTime = 2;              // 开始时间
+}

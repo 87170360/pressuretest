@@ -32,7 +32,11 @@
             line-height: 80px;
             color: white;
         }
-    </style>
+        .row {
+            margin-right: unset;
+            margin-left:unset;
+        }
+</style>
 </head>
 <body>
 <div class="header">
@@ -77,10 +81,12 @@
             <!-- Table -->
             <table class="table">
                 <thead><tr>
-                    <th></th>
-                    <th>用户名词</th>
-                    <th>消息数量</th>
-                    <th></th>
+                    <th style="width: 15rem"></th>
+                    <th style="width: 15rem">运行数量</th>
+                    <th style="width: 20rem">匹配次数（0无限匹配）</th>
+                    <th style="width: 20rem">用户名词</th>
+                    <th style="width: 20rem">消息数量</th>
+                    <th style="width: 20rem">删除</th>
                 </tr></thead>
             </table>
         </div>
